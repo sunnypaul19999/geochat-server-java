@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import helios.server.geochat.dto.UserLocationDTO;
-import helios.server.geochat.model.GeoPoint;
 import helios.server.geochat.service.GeoPointService;
 
 @RestController
