@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import helios.server.geochat.dto.UserLocationDTO;
 import helios.server.geochat.model.GeoPoint;
 import helios.server.geochat.service.GeoPointService;
 
@@ -19,8 +19,9 @@ public class GeoPointRest {
     GeoPointService geoPointService;
 
     @PostMapping(value = "/register")
-    public GeoPoint registerGeoPoint(@RequestBody GeoPoint geoPoint) {
-        return geoPoint;
+    public UserLocationDTO registerGeoPoint(@RequestBody UserLocationDTO userLocationDTO) {
+        geoPointService.registerGeoPoint(userLocationDTO);
+        return userLocationDTO;
     }
 
     @GetMapping(value = "/description")

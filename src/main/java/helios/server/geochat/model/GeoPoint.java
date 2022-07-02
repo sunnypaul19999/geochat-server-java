@@ -4,6 +4,8 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import helios.server.geochat.dto.UserLocationDTO;
+
 @Entity
 @Table(name = "geopoint")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -25,9 +27,9 @@ public class GeoPoint {
     GeoPoint() {
     }
 
-    public GeoPoint(double lat, double lon) {
-        this.lat = lat;
-        this.lon = lon;
+    public GeoPoint(UserLocationDTO userLocationDTO) {
+        this.lat = userLocationDTO.getLat();
+        this.lon = userLocationDTO.getLon();
     }
 
     public int getPlusCode() {
