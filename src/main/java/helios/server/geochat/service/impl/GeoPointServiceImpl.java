@@ -1,5 +1,7 @@
 package helios.server.geochat.service.impl;
 
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,13 @@ public class GeoPointServiceImpl implements GeoPointService {
     @Override
     public boolean registerGeoPoint(UserLocationDTO userLocationDTO) {
         GeoPoint geoPoint = new GeoPoint(calcPlusCode(userLocationDTO), userLocationDTO);
-        geoPointRepository.save(geoPoint);
-        return false;
+        try {
+            geoPointRepository.save(geoPoint);
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName())
+                    .log(java.util.logging.Level.SEVERE, "error while saving geopoint", e);
+        }
+
+        return true;
     }
 }
