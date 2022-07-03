@@ -27,6 +27,6 @@ public class InvalidDTOFieldValueException extends Exception {
     }
 
     public InvalidDTOFieldValueException.ErrorView getErrorView() {
-        return new ErrorView("Hello");
+        return new ErrorView(super.getMessage());
     }
 }

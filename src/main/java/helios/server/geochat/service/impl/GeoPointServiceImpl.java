@@ -16,9 +16,8 @@ public class GeoPointServiceImpl implements GeoPointService {
 
     @Override
     public boolean registerGeoPoint(UserLocationDTO userLocationDTO) {
-        GeoPoint geoPoint = new GeoPoint(userLocationDTO);
+        GeoPoint geoPoint = new GeoPoint(calcPlusCode(userLocationDTO), userLocationDTO);
         geoPointRepository.save(geoPoint);
         return false;
     }
-
 }

@@ -13,8 +13,8 @@ public class GeoPoint {
 
     @Id
     @Column(name = "plus_code")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int plusCode;
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String plusCode;
 
     @Column(name = "lattitude")
     private double lat;
@@ -27,16 +27,17 @@ public class GeoPoint {
     GeoPoint() {
     }
 
-    public GeoPoint(UserLocationDTO userLocationDTO) {
+    public GeoPoint(String plusCode, UserLocationDTO userLocationDTO) {
+        this.plusCode = plusCode;
         this.lat = userLocationDTO.getLat();
         this.lon = userLocationDTO.getLon();
     }
 
-    public int getPlusCode() {
+    public String getPlusCode() {
         return plusCode;
     }
 
-    public void setPlusCode(int plusCode) {
+    public void setPlusCode(String plusCode) {
         this.plusCode = plusCode;
     }
 

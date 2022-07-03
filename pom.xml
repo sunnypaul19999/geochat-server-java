@@ -55,6 +55,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.google.openlocationcode/openlocationcode -->
+		<dependency>
+			<groupId>com.google.openlocationcode</groupId>
+			<artifactId>openlocationcode</artifactId>
+			<version>1.0.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
