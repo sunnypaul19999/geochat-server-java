@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import helios.server.geochat.dto.UserLocationDTO;
+import helios.server.geochat.dto.UserLocationDTO.UserLocationDTO;
 
 @Entity
 @Table(name = "geopoint")

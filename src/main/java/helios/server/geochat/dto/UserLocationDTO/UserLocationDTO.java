@@ -1,13 +1,20 @@
-package helios.server.geochat.dto;
+package helios.server.geochat.dto.UserLocationDTO;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 import org.springframework.lang.NonNull;
 
 public class UserLocationDTO {
 
     @NonNull
+    @Max(value = 90, message = "longitude value must be within 180 to -180")
+    @Min(value = -90, message = "longitude value must be within 180 to -180")
     private double lat;
 
     @NonNull
+    @Max(value = 180, message = "longitude value must be within 180 to -180")
+    @Min(value = -180, message = "longitude value must be within 180 to -180")
     private double lon;
 
     public UserLocationDTO(double lat, double lon) {
