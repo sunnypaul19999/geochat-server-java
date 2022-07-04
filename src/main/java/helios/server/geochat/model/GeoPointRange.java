@@ -10,6 +10,9 @@ public class GeoPointRange {
     @Column(name = "radius", nullable = false)
     private int radius;
 
+    public GeoPointRange() {
+    }
+
     public GeoPointRange(int radius) {
         this.radius = radius;
     }

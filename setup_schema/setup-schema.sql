@@ -27,7 +27,7 @@ constraint role_id_fk foreign key(role_id) references geouser_assumable_role(rol
 );
 
 create table if not exists geopointrange(
-radius int check(radius >= 100) not null,
+radius int check(radius >= 100 & radius <= 10000) not null,
 constraint radius_pk primary key(radius)
 );
 
