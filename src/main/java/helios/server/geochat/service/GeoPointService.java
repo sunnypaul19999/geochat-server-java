@@ -13,4 +13,6 @@ public interface GeoPointService {
     }
 
     boolean registerGeoPoint(UserLocationDTO userLocationDTO);
+
+    boolean checkIfInRangeWithOtherGeoPoint();
 }

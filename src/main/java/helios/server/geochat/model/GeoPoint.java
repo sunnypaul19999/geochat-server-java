@@ -1,26 +1,27 @@
 package helios.server.geochat.model;
 
-import javax.persistence.*;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.*;
 
 import helios.server.geochat.dto.UserLocationDTO.UserLocationDTO;
 
 @Entity
 @Table(name = "geopoint")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class GeoPoint {
 
     @Id
-    @Column(name = "plus_code")
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "plus_code", updatable = false, nullable = false)
     private String plusCode;
 
-    @Column(name = "lattitude")
+    @Column(name = "lattitude", precision = 16, scale = 14, updatable = false, nullable = false)
     private double lat;
 
-    @Column(name = "longitude")
+    @Column(name = "longitude", precision = 18, scale = 15, updatable = false, nullable = false)
     private double lon;
+
+    @OneToMany(mappedBy = "geoPoint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    List<Topic> topic;
 
     // hibernate use no-args constructor to create the object
     // use getters and setters of the fields to get and set values
@@ -55,5 +56,13 @@ public class GeoPoint {
 
     public void setLon(double lon) {
         this.lon = lon;
+    }
+
+    public List<Topic> getTopic() {
+        return topic;
+    }
+
+    public void setTopic(List<Topic> topic) {
+        this.topic = topic;
     }
 }

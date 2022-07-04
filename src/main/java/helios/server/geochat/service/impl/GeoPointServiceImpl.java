@@ -28,4 +28,10 @@ public class GeoPointServiceImpl implements GeoPointService {
 
         return true;
     }
+
+    @Override
+    public boolean checkIfInRangeWithOtherGeoPoint() {
+
+        return false;
+    }
 }
