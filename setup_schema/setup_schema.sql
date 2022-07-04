@@ -1,5 +1,5 @@
 #WARNING HERE
-drop database GEOCHATSERVER;
+drop database if exists GEOCHATSERVER;
 
 create database if not exists GEOCHATSERVER;
 

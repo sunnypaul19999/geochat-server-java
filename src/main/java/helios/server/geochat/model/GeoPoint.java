@@ -20,6 +20,10 @@ public class GeoPoint {
     @Column(name = "longitude", precision = 18, scale = 15, updatable = false, nullable = false)
     private double lon;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "radius", updatable = false, nullable = false)
+    private GeoPointRange geoPointRange;
+
     @OneToMany(mappedBy = "geoPoint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<Topic> topic;
 
