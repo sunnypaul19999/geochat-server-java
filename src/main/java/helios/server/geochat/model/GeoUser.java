@@ -18,6 +18,9 @@ public class GeoUser {
     @Column(name = "password", length = 256, nullable = false)
     private String password;
 
+    public GeoUser() {
+    }
+
     public GeoUser(String username, String password) {
         this.username = username;
         this.password = password;

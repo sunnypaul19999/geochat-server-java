@@ -20,10 +20,6 @@ public class GeoPoint {
     @Column(name = "longitude", precision = 18, scale = 15, updatable = false, nullable = false)
     private double lon;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinColumn(name = "radius", updatable = false, nullable = false)
-    private GeoPointRange geoPointRange;
-
     @OneToMany(mappedBy = "geoPoint", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<Topic> topic;
 
@@ -68,13 +64,5 @@ public class GeoPoint {
 
     public void setTopic(List<Topic> topic) {
         this.topic = topic;
-    }
-
-    public GeoPointRange getGeoPointRange() {
-        return geoPointRange;
-    }
-
-    public void setGeoPointRange(GeoPointRange geoPointRange) {
-        this.geoPointRange = geoPointRange;
     }
 }

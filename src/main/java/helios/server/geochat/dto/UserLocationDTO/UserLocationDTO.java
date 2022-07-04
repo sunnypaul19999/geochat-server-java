@@ -16,15 +16,9 @@ public class UserLocationDTO {
     @Min(value = -180, message = "longitude value must be within 180 to -180")
     private double lon;
 
-    @NotNull
-    @Max(value = 10000)
-    @Min(value = 100)
-    private int radius;
-
-    public UserLocationDTO(double lat, double lon, int radius) {
+    public UserLocationDTO(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
-        this.radius = radius;
     }
 
     public double getLat() {
@@ -41,13 +35,5 @@ public class UserLocationDTO {
 
     public void setLon(double lon) {
         this.lon = lon;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
     }
 }

@@ -23,6 +23,9 @@ public class SubTopicMetaDiscussion {
     @JoinColumn(name = "sender_id", nullable = false)
     private GeoUser geoUser;
 
+    public SubTopicMetaDiscussion() {
+    }
+
     public SubTopicMetaDiscussion(String message, SubTopic subTopic, GeoUser geoUser) {
         this.message = message;
         this.subTopic = subTopic;

@@ -22,6 +22,9 @@ public class SubTopic {
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
+    SubTopic() {
+    }
+
     public SubTopic(String title, String description) {
         this.title = title;
         this.description = description;

@@ -27,17 +27,24 @@ constraint role_id_fk foreign key(role_id) references geouser_assumable_role(rol
 );
 
 create table if not exists geopointrange(
+id int,
 radius int check(radius >= 100 & radius <= 10000) not null,
-constraint radius_pk primary key(radius)
+constraint id primary key(id)
 );
+
+/*create table if not exists geopointrangeconfig(
+id int,
+max_radius int,
+min_radius int,
+default_radius int not null,
+constraint id primary key(id)
+);*/
 
 create table if not exists geopoint(
 plus_code varchar(20),
 lattitude numeric(16,14) not null,
 longitude numeric(18,15) not null,
-radius int,
-constraint plus_code_pk primary key(plus_code),
-constraint radius_fk foreign key(radius) references geopointrange(radius)
+constraint plus_code_pk primary key(plus_code)
 );
 
 create table if not exists topic(
@@ -68,4 +75,4 @@ constraint sub_topic_id_fk foreign key(sub_topic_id) references subtopic(sub_top
 constraint sender_id_fk foreign key(sender_id) references geouser(user_id)
 );
 
-select * from geopoint;
+insert into geopointrange (id,radius) values(1,500);

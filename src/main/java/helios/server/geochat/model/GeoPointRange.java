@@ -7,6 +7,9 @@ import javax.persistence.*;
 public class GeoPointRange {
 
     @Id
+    @Column(name = "id", insertable = false, updatable = false, nullable = false)
+    private int id;
+
     @Column(name = "radius", nullable = false)
     private int radius;
 
