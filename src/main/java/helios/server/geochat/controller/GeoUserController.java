@@ -4,16 +4,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import helios.server.geochat.dto.request.NewGeoUserDTO;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterFailureResponse;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterSuccessResponse;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOResponse;
+import helios.server.geochat.exceptions.dtoException.InvalidDTOFieldValueException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
@@ -28,10 +33,15 @@ public class GeoUserController {
 
     @PostMapping(value = "/register")
     public GeoUserDTOResponse registerGeoPoint(
-            @Valid @RequestBody NewGeoUserDTO newGeoUserDTO,
             HttpServletResponse resp,
-            BindingResult result) {
+            @Valid @RequestBody NewGeoUserDTO newGeoUserDTO,
+            BindingResult bindingResult) {
         try {
+            if (bindingResult.hasErrors()) {
+
+                throw new InvalidDTOFieldValueException();
+            }
+
             geoUserServiceImpl.addUser(newGeoUserDTO);
 
             resp.setStatus(200);
@@ -39,6 +49,15 @@ public class GeoUserController {
 
             return geoUserDTOOnRegiseterSuccessResponse;
 
+        } catch (InvalidDTOFieldValueException e) {
+            GeoUserDTOOnRegiseterFailureResponse onRegisterDataBindfailure = new GeoUserDTOOnRegiseterFailureResponse();
+
+            onRegisterDataBindfailure.setHasDataBindingfieldError(true);
+
+            resp.setStatus(406);
+            onRegisterDataBindfailure.setMessage("Data binding error");
+
+            return onRegisterDataBindfailure;
         } catch (GeoUserConfirmPasswordMismatchException e) {
             GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
 
@@ -61,5 +80,17 @@ public class GeoUserController {
 
             return geoUserDTOOnRegiseterFailureResponse;
         }
+    }
+
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
+    public GeoUserDTOOnRegiseterFailureResponse invalidDataRequest(HttpMessageNotReadableException e) {
+        GeoUserDTOOnRegiseterFailureResponse onRegisterDataBindfailure = new GeoUserDTOOnRegiseterFailureResponse();
+
+        onRegisterDataBindfailure.setHasDataBindingfieldError(true);
+
+        onRegisterDataBindfailure.setMessage("Data binding error");
+
+        return onRegisterDataBindfailure;
     }
 }
