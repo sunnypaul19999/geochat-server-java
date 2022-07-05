@@ -28,7 +28,7 @@ import helios.server.geochat.service.GeoPointService;
 
 @RestController
 @RequestMapping(value = "/geopoint")
-public class GeoPointRest {
+public class GeoPointController {
 
     @Autowired
     GeoPointService geoPointService;
