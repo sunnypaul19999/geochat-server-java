@@ -10,7 +10,7 @@ import helios.server.geochat.dto.request.NewGeoUserDTO;
 import helios.server.geochat.dto.request.VerifyGeoUserDTO;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExitsException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
 import helios.server.geochat.model.GeoUser;
 import helios.server.geochat.repository.GeoUserRepository;
@@ -60,13 +60,13 @@ public class GeoUserServiceImpl implements GeoUserService {
 
             getUser(newGeoUserDTO);
 
-            throw new GeoUserExitsException(newGeoUserDTO.getUsername(), operation);
+            throw new GeoUserExistsException(newGeoUserDTO.getUsername(), operation);
 
         } catch (GeoUserNotFoundException e) {
             GeoUser geoUser = new GeoUser(newGeoUserDTO);
 
             geoUserRepository.save(geoUser);
-        } catch (GeoUserConfirmPasswordMismatchException | GeoUserExitsException e) {
+        } catch (GeoUserConfirmPasswordMismatchException | GeoUserExistsException e) {
             throw e;
         } catch (Exception e) {
             throw new GeoUserException(operation, e.getMessage());

@@ -16,7 +16,7 @@ import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterS
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOResponse;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExitsException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
 import helios.server.geochat.service.impl.GeoUserServiceImpl;
 
 @RestController
@@ -44,7 +44,7 @@ public class GeoUserController {
             geoUserDTOOnRegiseterFailureResponse.setMessage("Password and confirm password mismatch");
 
             return geoUserDTOOnRegiseterFailureResponse;
-        } catch (GeoUserExitsException e) {
+        } catch (GeoUserExistsException e) {
             GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
 
             geoUserDTOOnRegiseterFailureResponse.setMessage("User already exits!");
