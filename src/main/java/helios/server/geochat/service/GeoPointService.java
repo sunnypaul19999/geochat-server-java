@@ -25,9 +25,10 @@ public interface GeoPointService {
             dist = Math.toDegrees(dist);
             dist = dist * 60 * 1.1515;
 
+            // converting to meters
             dist = dist * 1609.344;
 
-            return (dist);
+            return dist;
         }
     }
 

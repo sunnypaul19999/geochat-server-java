@@ -42,13 +42,14 @@ public class GeoPointServiceImpl implements GeoPointService {
                     Logger.getLogger(getClass().getName()).log(java.util.logging.Level.INFO,
                             "location already not-registered", userLocationDTO);
                 } else {
-                    Logger.getLogger(getClass().getName()).log(java.util.logging.Level.INFO,
-                            "nearest location exits");
+                    Logger.getLogger(getClass().getName())
+                            .log(java.util.logging.Level.INFO, "nearest location exits");
                 }
             }
         } catch (Exception e) {
             Logger.getLogger(getClass().getName())
                     .log(java.util.logging.Level.SEVERE, "error while saving geopoint", e);
+            return false;
         }
 
         return true;

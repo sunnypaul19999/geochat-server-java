@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import helios.server.geochat.dto.request.TopicDTO;
+
 @Entity
 @Table(name = "topic")
 public class Topic {
@@ -27,9 +29,8 @@ public class Topic {
     Topic() {
     }
 
-    Topic(int topicId, String topicTitle) {
-        this.topicId = topicId;
-        this.topicTitle = topicTitle;
+    public Topic(TopicDTO topicDTO) {
+        this.topicTitle = topicDTO.getTitle();
     }
 
     public int getTopicId() {

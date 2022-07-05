@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import helios.server.geochat.controller.exceptions.GeoPointRestRegistrationFailure;
 import helios.server.geochat.dto.InvalidDTOFieldValueException;
 import helios.server.geochat.dto.UserLocationDTO.UserLocationDTO;
 import helios.server.geochat.service.GeoPointService;
@@ -37,7 +38,10 @@ public class GeoPointRest {
             throw new InvalidDTOFieldValueException();
         } else {
             try {
-                geoPointService.registerGeoPoint(userLocationDTO);
+                boolean isRegistered = geoPointService.registerGeoPoint(userLocationDTO);
+                if (!isRegistered) {
+                    throw new GeoPointRestRegistrationFailure("could not register geopoint");
+                }
             } catch (Exception e) {
                 Logger.getLogger(getClass().getName())
                         .log(java.util.logging.Level.SEVERE, "error while saving geopoint", e);
