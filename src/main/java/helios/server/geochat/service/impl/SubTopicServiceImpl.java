@@ -24,6 +24,16 @@ public class SubTopicServiceImpl implements SubTopicService {
     SubTopicRepository subTopicRepository;
 
     @Override
+    public SubTopic getSubTopicById(int subTopicId) throws SubTopicNotFoundException {
+        Optional<SubTopic> sOptional = subTopicRepository.findById(subTopicId);
+        if (sOptional.isPresent()) {
+            return sOptional.get();
+        }
+
+        throw new SubTopicNotFoundException(subTopicId, "GET_SUBTOPIC_BY_ID");
+    }
+
+    @Override
     public Page<SubTopic> getSubTopics(int pageNumber) throws SubTopicException {
         try {
             PageRequest pageable = PageRequest.of(pageNumber, 5);
@@ -44,19 +54,18 @@ public class SubTopicServiceImpl implements SubTopicService {
 
     @Override
     public SubTopic deleteSubTopic(int subTopicId) throws SubTopicException {
-        Optional<SubTopic> subTopic;
-        try {
-            subTopic = subTopicRepository.findById(subTopicId);
-            if (subTopic.isPresent()) {
-                subTopicRepository.delete(subTopic.get());
 
-                // returns the topic entity object after persisting the deleted entity
-                return subTopic.get();
-            } else {
-                throw new SubTopicNotFoundException(subTopicId, "DELETE");
-            }
-        } catch (SubTopicException e) {
-            throw e;
+        try {
+            SubTopic subTopic = getSubTopicById(subTopicId);
+
+            subTopicRepository.delete(subTopic);
+
+            // returns the topic entity object after persisting the deleted entity
+            return subTopic;
+
+        } catch (SubTopicNotFoundException e) {
+            // not rethrowing to change the operation type
+            throw new SubTopicNotFoundException(subTopicId, "DELETE");
         } catch (Exception e) {
             throw new SubTopicException("DELETE", e.getMessage());
         }
