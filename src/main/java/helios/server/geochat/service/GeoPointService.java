@@ -3,6 +3,8 @@ package helios.server.geochat.service;
 import com.google.openlocationcode.OpenLocationCode;
 
 import helios.server.geochat.dto.UserLocationDTO.UserLocationDTO;
+import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointDefaultRangeNotFoundException;
+import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
 
 public interface GeoPointService {
 
@@ -12,7 +14,7 @@ public interface GeoPointService {
         return openLocationCode.getCode();
     }
 
-    boolean registerGeoPoint(UserLocationDTO userLocationDTO);
+    String registerGeoPoint(UserLocationDTO userLocationDTO) throws GeoPointException;
 
     public static double calDistanceGeoPoints(double lat1, double lon1, double lat2, double lon2) {
         if ((lat1 == lat2) && (lon1 == lon2)) {
@@ -32,5 +34,6 @@ public interface GeoPointService {
         }
     }
 
-    public String checkIfInRangeWithOtherGeoPoint(UserLocationDTO userLocationDTO);
+    public String checkIfInRangeWithOtherGeoPoint(UserLocationDTO userLocationDTO)
+            throws GeoPointDefaultRangeNotFoundException;
 }

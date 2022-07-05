@@ -38,13 +38,12 @@ public class GeoPointRest {
             throw new InvalidDTOFieldValueException();
         } else {
             try {
-                boolean isRegistered = geoPointService.registerGeoPoint(userLocationDTO);
-                if (!isRegistered) {
-                    throw new GeoPointRestRegistrationFailure("could not register geopoint");
-                }
+                String plusCode = geoPointService.registerGeoPoint(userLocationDTO);
             } catch (Exception e) {
                 Logger.getLogger(getClass().getName())
                         .log(java.util.logging.Level.SEVERE, "error while saving geopoint", e);
+
+                // throw new GeoPointRestRegistrationFailure("could not register geopoint");
             }
         }
         return userLocationDTO;
