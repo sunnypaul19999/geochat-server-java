@@ -36,4 +36,9 @@ public class UserLocationDTO {
     public void setLon(double lon) {
         this.lon = lon;
     }
+
+    @Override
+    public String toString() {
+        return "UserLocationDTO [lat=" + lat + ", lon=" + lon + "]";
+    }
 }

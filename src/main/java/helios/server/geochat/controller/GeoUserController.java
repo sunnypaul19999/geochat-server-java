@@ -3,6 +3,8 @@ package helios.server.geochat.controller;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -31,6 +33,8 @@ public class GeoUserController {
     @Autowired
     GeoUserServiceImpl geoUserServiceImpl;
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @PostMapping(value = "/register")
     public GeoUserDTOResponse registerGeoPoint(
             HttpServletResponse resp,
@@ -38,7 +42,6 @@ public class GeoUserController {
             BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
-
                 throw new InvalidDTOFieldValueException();
             }
 
@@ -50,6 +53,9 @@ public class GeoUserController {
             return geoUserDTOOnRegiseterSuccessResponse;
 
         } catch (InvalidDTOFieldValueException e) {
+            logger.info("rejecting userLocationDTO values sent by user. Not valid has binding errors %s",
+                    newGeoUserDTO.toString());
+
             GeoUserDTOOnRegiseterFailureResponse onRegisterDataBindfailure = new GeoUserDTOOnRegiseterFailureResponse();
 
             onRegisterDataBindfailure.setHasDataBindingfieldError(true);
@@ -59,6 +65,8 @@ public class GeoUserController {
 
             return onRegisterDataBindfailure;
         } catch (GeoUserConfirmPasswordMismatchException e) {
+            logger.info("Password and Confirm Password mismatch occured while registering", newGeoUserDTO.toString());
+
             GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
 
             resp.setStatus(400);
@@ -66,6 +74,8 @@ public class GeoUserController {
 
             return geoUserDTOOnRegiseterFailureResponse;
         } catch (GeoUserExistsException e) {
+            logger.info("User already exits %s", newGeoUserDTO.toString());
+
             GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
 
             resp.setStatus(409);
@@ -73,6 +83,8 @@ public class GeoUserController {
 
             return geoUserDTOOnRegiseterFailureResponse;
         } catch (GeoUserException e) {
+            logger.error("Error while registering geouser", e);
+
             GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
 
             resp.setStatus(500);
@@ -85,6 +97,8 @@ public class GeoUserController {
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
     public GeoUserDTOOnRegiseterFailureResponse invalidDataRequest(HttpMessageNotReadableException e) {
+        logger.info("Rejecting userLocationDTO values sent by user. Not valid has binding errors.");
+
         GeoUserDTOOnRegiseterFailureResponse onRegisterDataBindfailure = new GeoUserDTOOnRegiseterFailureResponse();
 
         onRegisterDataBindfailure.setHasDataBindingfieldError(true);

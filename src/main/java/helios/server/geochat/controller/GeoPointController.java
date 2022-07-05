@@ -1,12 +1,13 @@
 package helios.server.geochat.controller;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import org.springframework.validation.BindingResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.validation.Valid;
+
+import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -33,6 +34,8 @@ public class GeoPointController {
     @Autowired
     GeoPointService geoPointService;
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @PostMapping(value = "/register")
     public GeoPointDTOResponse registerGeoPoint(
             HttpServletResponse resp,
@@ -40,8 +43,6 @@ public class GeoPointController {
             BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
-                Logger.getLogger(getClass().getName()).log(Level.INFO, "rejecting values sent by user. not valid");
-
                 throw new InvalidDTOFieldValueException();
             }
 
@@ -52,6 +53,9 @@ public class GeoPointController {
             return new GeoPointDTOOnRegisterSuccessResponse(plusCode);
 
         } catch (InvalidDTOFieldValueException e) {
+            logger.info("rejecting userLocationDTO values sent by user. Not valid has binding errors %s",
+                    userLocationDTO.toString());
+
             GeoPointDTOOnRegisterFailureResponse onRegisterDataBindfailure = new GeoPointDTOOnRegisterFailureResponse();
 
             onRegisterDataBindfailure.setHasDataBindingfieldError(true);
@@ -61,12 +65,10 @@ public class GeoPointController {
 
             return onRegisterDataBindfailure;
         } catch (GeoPointException e) {
+            logger.error("Error while saving geopoint", e);
+
             resp.setStatus(500);
 
-        } catch (Exception e) {
-            resp.setStatus(500);
-            Logger.getLogger(getClass().getName())
-                    .log(java.util.logging.Level.SEVERE, "error while saving geopoint", e);
         }
 
         return new GeoPointDTOOnRegisterFailureResponse();
@@ -80,6 +82,8 @@ public class GeoPointController {
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
     public GeoPointDTOOnRegisterFailureResponse invalidDataRequest(HttpMessageNotReadableException e) {
+        logger.info("Rejecting userLocationDTO values sent by user. Not valid has binding errors.");
+
         GeoPointDTOOnRegisterFailureResponse onRegisterDataBindfailure = new GeoPointDTOOnRegisterFailureResponse();
 
         onRegisterDataBindfailure.setHasDataBindingfieldError(true);
