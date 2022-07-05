@@ -1,4 +1,4 @@
-package helios.server.geochat.dto.UserLocationDTO;
+package helios.server.geochat.dto.request;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Max;

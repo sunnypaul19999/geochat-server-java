@@ -10,7 +10,7 @@ public class GeoPointDTOOnRegisterSuccessResponse extends GeoPointDTOResponse {
         super(true, plusCode);
     }
 
-    public static String getMessage() {
+    public String getMessage() {
         return MESSAGE;
     }
 }

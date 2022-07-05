@@ -2,7 +2,7 @@ package helios.server.geochat.service;
 
 import com.google.openlocationcode.OpenLocationCode;
 
-import helios.server.geochat.dto.UserLocationDTO.UserLocationDTO;
+import helios.server.geochat.dto.request.UserLocationDTO;
 import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointDefaultRangeNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
 

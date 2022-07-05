@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import helios.server.geochat.dto.UserLocationDTO.UserLocationDTO;
+import helios.server.geochat.dto.request.UserLocationDTO;
 import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointDefaultRangeNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
 import helios.server.geochat.model.GeoPoint;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import helios.server.geochat.dto.UserLocationDTO.UserLocationDTO;
+import helios.server.geochat.dto.request.UserLocationDTO;
 
 @Entity
 @Table(name = "geopoint")

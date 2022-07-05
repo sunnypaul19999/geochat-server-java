@@ -31,8 +31,8 @@ id int,
 radius int check(radius >= 100 & radius <= 10000) not null,
 constraint id primary key(id)
 );
-
-/*create table if not exists geopointrangeconfig(
+/*
+create table if not exists geopointrangeconfig(
 id int,
 max_radius int,
 min_radius int,
