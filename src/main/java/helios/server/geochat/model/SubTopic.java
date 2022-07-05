@@ -2,6 +2,8 @@ package helios.server.geochat.model;
 
 import javax.persistence.*;
 
+import helios.server.geochat.dto.request.SubTopicDTO;
+
 @Entity
 @Table(name = "subtopic")
 public class SubTopic {
@@ -25,9 +27,9 @@ public class SubTopic {
     SubTopic() {
     }
 
-    public SubTopic(String title, String description) {
-        this.title = title;
-        this.description = description;
+    public SubTopic(SubTopicDTO subTopicDTO) {
+        this.title = subTopicDTO.getTitle();
+        this.description = subTopicDTO.getDescription();
     }
 
     public int getId() {

@@ -1,4 +1,4 @@
-package helios.server.geochat.dto.response;
+package helios.server.geochat.dto.response.topicResponse;
 
 import javax.validation.constraints.NotNull;
 

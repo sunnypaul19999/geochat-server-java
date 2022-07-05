@@ -5,7 +5,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 public class TopicDTO {
-
     @NotNull
     @Length(min = 80, max = 250)
     private String title;
