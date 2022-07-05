@@ -9,12 +9,12 @@ import helios.server.geochat.dto.request.NewGeoUserDTO;
 public class GeoUser {
 
     @Id
-    @Column(name = "user_id", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "geo_user_id_seqgenerator")
-    @SequenceGenerator(name = "geo_user_id_seqgenerator", allocationSize = 1)
+    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "geouser_id_seqgenerator")
+    @SequenceGenerator(name = "geouser_id_seqgenerator", initialValue = 1, allocationSize = 1)
     private int id;
 
-    @Column(name = "message", length = 50, nullable = false)
+    @Column(name = "username", length = 50, nullable = false)
     private String username;
 
     @Column(name = "password", length = 256, nullable = false)

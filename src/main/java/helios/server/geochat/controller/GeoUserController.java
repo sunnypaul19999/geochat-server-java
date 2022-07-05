@@ -34,6 +34,7 @@ public class GeoUserController {
         try {
             geoUserServiceImpl.addUser(newGeoUserDTO);
 
+            resp.setStatus(200);
             GeoUserDTOOnRegiseterSuccessResponse geoUserDTOOnRegiseterSuccessResponse = new GeoUserDTOOnRegiseterSuccessResponse();
 
             return geoUserDTOOnRegiseterSuccessResponse;
@@ -41,18 +42,21 @@ public class GeoUserController {
         } catch (GeoUserConfirmPasswordMismatchException e) {
             GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
 
+            resp.setStatus(400);
             geoUserDTOOnRegiseterFailureResponse.setMessage("Password and confirm password mismatch");
 
             return geoUserDTOOnRegiseterFailureResponse;
         } catch (GeoUserExistsException e) {
             GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
 
+            resp.setStatus(409);
             geoUserDTOOnRegiseterFailureResponse.setMessage("User already exits!");
 
             return geoUserDTOOnRegiseterFailureResponse;
         } catch (GeoUserException e) {
             GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
 
+            resp.setStatus(500);
             geoUserDTOOnRegiseterFailureResponse.setMessage("OOPS! please try later");
 
             return geoUserDTOOnRegiseterFailureResponse;

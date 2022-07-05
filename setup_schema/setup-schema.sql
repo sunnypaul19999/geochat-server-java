@@ -6,7 +6,7 @@ create database if not exists geochatserver;
 use geochatserver;
 
 create table if not exists geouser(
-user_id int,
+user_id int auto_increment,
 username varchar(50) not null,
 password varchar(256) not null,
 constraint user_id_pk primary key(user_id),
