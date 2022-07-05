@@ -53,7 +53,7 @@ public class GeoPointServiceImpl implements GeoPointService {
                 // default range is 500
                 plusCode = checkIfInRangeWithOtherGeoPoint(userLocationDTO);
 
-                // if no in range geopoint exits creates on for the location
+                // if no geopoint in range exits creates one for the location
                 if (plusCode.isEmpty()) {
                     GeoPoint geoPoint = new GeoPoint(calcPlusCode(userLocationDTO), userLocationDTO);
 
