@@ -4,7 +4,7 @@ public class SubTopicMetaDiscussionOnDeleteException extends SubTopicMetaDiscuss
 
     private static final String MSGFORMAT = "SubTopicMetaDiscussion Message with message Id %d does not exits";
 
-    public SubTopicMetaDiscussionOnDeleteException(int topicId, String operation) {
-        super(operation, String.format(MSGFORMAT, topicId));
+    public SubTopicMetaDiscussionOnDeleteException(int messageId, String operation) {
+        super(operation, String.format(MSGFORMAT, messageId));
     }
 }

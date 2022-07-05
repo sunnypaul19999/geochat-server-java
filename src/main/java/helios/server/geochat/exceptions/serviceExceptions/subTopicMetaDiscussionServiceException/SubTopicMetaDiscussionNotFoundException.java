@@ -4,7 +4,7 @@ public class SubTopicMetaDiscussionNotFoundException extends SubTopicMetaDiscuss
 
     private static final String MSGFORMAT = "SubTopicMetaDiscussion Message with message Id %d does not exits";
 
-    public SubTopicMetaDiscussionNotFoundException(int topicId, String operation) {
-        super(operation, String.format(MSGFORMAT, topicId));
+    public SubTopicMetaDiscussionNotFoundException(int messageId, String operation) {
+        super(operation, String.format(MSGFORMAT, messageId));
     }
 }

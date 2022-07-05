@@ -2,6 +2,8 @@ package helios.server.geochat.model;
 
 import javax.persistence.*;
 
+import helios.server.geochat.dto.request.NewGeoUserDTO;
+
 @Entity
 @Table(name = "geouser")
 public class GeoUser {
@@ -21,9 +23,9 @@ public class GeoUser {
     public GeoUser() {
     }
 
-    public GeoUser(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public GeoUser(NewGeoUserDTO newGeoUserDTO) {
+        this.username = newGeoUserDTO.getUsername();
+        this.password = newGeoUserDTO.getPassword();
     }
 
     public int getId() {
