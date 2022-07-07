@@ -23,7 +23,7 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
     SubTopicServiceImpl subTopicServiceImpl;
 
     @Autowired
-    GeoUserServiceImpl geoUserServiceImpl;
+    GeoSecurityUserServiceImpl geoUserServiceImpl;
 
     @Autowired
     SubTopicMetaDiscussionRepository subTopicMetaDiscussionRepository;

@@ -10,21 +10,38 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import helios.server.geochat.model.GeoUser;
 
-public class GeoUserDetails implements UserDetails, GrantedAuthority {
+class GeoSecurityUserGrantedAuthoriy implements GrantedAuthority {
 
     @NotNull
-    GeoUser geoUser;
+    private final String authority;
 
-    public GeoUserDetails(GeoUser geoUser) {
+    GeoSecurityUserGrantedAuthoriy(String authority) {
+        this.authority = authority;
+    }
+
+    @Override
+    public String getAuthority() {
+
+        return this.authority;
+    }
+
+}
+
+public class GeoSecurityUserDetails implements UserDetails {
+
+    @NotNull
+    private final transient GeoUser geoUser;
+
+    public GeoSecurityUserDetails(GeoUser geoUser) {
         this.geoUser = geoUser;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        ArrayList<GeoUserDetails> authorities = new ArrayList<>();
+        ArrayList<GeoSecurityUserGrantedAuthoriy> authorities = new ArrayList<>();
 
-        authorities.add(this);
+        authorities.add(new GeoSecurityUserGrantedAuthoriy("USER"));
 
         return authorities;
     }
@@ -61,11 +78,5 @@ public class GeoUserDetails implements UserDetails, GrantedAuthority {
     public boolean isEnabled() {
 
         return true;
-    }
-
-    @Override
-    public String getAuthority() {
-
-        return "USER";
     }
 }

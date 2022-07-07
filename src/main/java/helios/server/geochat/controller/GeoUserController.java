@@ -24,14 +24,14 @@ import helios.server.geochat.exceptions.dtoException.InvalidDTOFieldValueExcepti
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
-import helios.server.geochat.service.impl.GeoUserServiceImpl;
+import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 
 @RestController
 @RequestMapping(value = "/user")
 public class GeoUserController {
 
     @Autowired
-    GeoUserServiceImpl geoUserServiceImpl;
+    GeoSecurityUserServiceImpl geoUserServiceImpl;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -40,7 +40,6 @@ public class GeoUserController {
             HttpServletResponse resp,
             @Valid @RequestBody NewGeoUserDTO newGeoUserDTO,
             BindingResult bindingResult) {
-        logger.error("*******************");
         try {
             if (bindingResult.hasErrors()) {
                 throw new InvalidDTOFieldValueException();

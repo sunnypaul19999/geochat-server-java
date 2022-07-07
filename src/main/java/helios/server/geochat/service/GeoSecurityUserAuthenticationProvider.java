@@ -1,6 +1,7 @@
 package helios.server.geochat.service;
 
-import org.hibernate.annotations.common.util.impl.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import helios.server.geochat.service.impl.GeoUserServiceImpl;
+import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 
 class AuthEx extends AuthenticationException {
 
@@ -20,26 +21,38 @@ class AuthEx extends AuthenticationException {
 
 }
 
-public class GeoUserAuthenticationProvider implements AuthenticationProvider {
+public class GeoSecurityUserAuthenticationProvider implements AuthenticationProvider {
+
+    private final Logger logger;
+
+    private final GeoSecurityUserServiceImpl geoSecurityUserServiceImpl;
+
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    GeoUserServiceImpl geoUserServiceImpl;
+    public GeoSecurityUserAuthenticationProvider(GeoSecurityUserServiceImpl geoSecurityUserServiceImpl,
+            PasswordEncoder passwordEncoder) {
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+        this.geoSecurityUserServiceImpl = geoSecurityUserServiceImpl;
+
+        this.passwordEncoder = passwordEncoder;
+
+        this.logger = LoggerFactory.getLogger(getClass());
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         try {
 
-            LoggerFactory.logger(this.getClass()).info(
+            logger.info(
                     String.format("+++++ auth for username = %s, password = %s, authorites = %s ++++++",
                             authentication.getPrincipal(),
                             authentication.getCredentials(),
                             authentication.getAuthorities()));
 
-            UserDetails userDetails = geoUserServiceImpl.loadUserByUsername((String) authentication.getPrincipal());
+            UserDetails userDetails = geoSecurityUserServiceImpl
+                    .loadUserByUsername((String) authentication.getPrincipal());
 
             if (passwordEncoder.matches((String) authentication.getCredentials(), userDetails.getPassword())) {
                 return UsernamePasswordAuthenticationToken.authenticated(
@@ -58,7 +71,7 @@ public class GeoUserAuthenticationProvider implements AuthenticationProvider {
 
         } catch (Exception e) {
 
-            LoggerFactory.logger(this.getClass()).error(e);
+            logger.error("Unknown exception occured while authenticating user", e);
 
             throw new AuthEx("Something happend! we have no idea");
         }
@@ -67,7 +80,7 @@ public class GeoUserAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        LoggerFactory.logger(this.getClass()).info(
+        logger.info(
                 String.format(
                         "** GeoUserAuthenticationProvider found = %s %s**",
                         authentication.isAssignableFrom(UsernamePasswordAuthenticationToken.class),

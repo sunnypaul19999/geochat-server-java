@@ -13,15 +13,15 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import helios.server.geochat.service.GeoUserAuthenticationProvider;
-import helios.server.geochat.service.impl.GeoUserServiceImpl;
+import helios.server.geochat.service.GeoSecurityUserAuthenticationProvider;
+import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 
 @SpringBootApplication
 @EnableWebSecurity
 public class MainApplication {
 
 	@Autowired
-	GeoUserServiceImpl geoUserServiceImpl;
+	GeoSecurityUserServiceImpl geoSecurityUserServiceImpl;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -42,19 +42,16 @@ public class MainApplication {
 
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
-
-		return new GeoUserAuthenticationProvider();
+		return new GeoSecurityUserAuthenticationProvider(geoSecurityUserServiceImpl, passwordEncoder());
 	}
 
 	@Bean
 	public UserDetailsService userDetailsService() {
-
-		return geoUserServiceImpl;
+		return geoSecurityUserServiceImpl;
 	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-
 		return NoOpPasswordEncoder.getInstance();
 	}
 

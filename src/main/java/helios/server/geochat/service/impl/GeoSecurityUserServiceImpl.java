@@ -12,17 +12,21 @@ import org.springframework.stereotype.Service;
 import helios.server.geochat.dto.request.GeoUserDTO;
 import helios.server.geochat.dto.request.NewGeoUserDTO;
 import helios.server.geochat.dto.request.VerifyGeoUserDTO;
+
+import helios.server.geochat.model.GeoUser;
+
+import helios.server.geochat.repository.GeoUserRepository;
+
+import helios.server.geochat.service.GeoSecurityUserDetails;
+import helios.server.geochat.service.GeoUserService;
+
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
-import helios.server.geochat.model.GeoUser;
-import helios.server.geochat.repository.GeoUserRepository;
-import helios.server.geochat.service.GeoUserDetails;
-import helios.server.geochat.service.GeoUserService;
 
 @Service
-public class GeoUserServiceImpl implements GeoUserService, UserDetailsService {
+public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsService {
 
     @Autowired
     GeoUserRepository geoUserRepository;
@@ -52,7 +56,7 @@ public class GeoUserServiceImpl implements GeoUserService, UserDetailsService {
 
             GeoUser geoUser = getUser(new GeoUserDTO(username));
 
-            return new GeoUserDetails(geoUser);
+            return new GeoSecurityUserDetails(geoUser);
 
         } catch (GeoUserNotFoundException e) {
             LoggerFactory.getLogger(getClass()).trace("GeoUserNotFoundException");
