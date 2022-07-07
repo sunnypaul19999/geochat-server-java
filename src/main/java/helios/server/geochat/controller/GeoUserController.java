@@ -40,6 +40,7 @@ public class GeoUserController {
             HttpServletResponse resp,
             @Valid @RequestBody NewGeoUserDTO newGeoUserDTO,
             BindingResult bindingResult) {
+        logger.error("*******************");
         try {
             if (bindingResult.hasErrors()) {
                 throw new InvalidDTOFieldValueException();

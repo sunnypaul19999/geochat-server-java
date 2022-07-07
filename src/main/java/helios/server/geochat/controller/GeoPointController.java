@@ -74,7 +74,7 @@ public class GeoPointController {
         return new GeoPointDTOOnRegisterFailureResponse();
     }
 
-    @GetMapping(value = "/description")
+    @PostMapping(value = "/description")
     public String description() {
         return this.getClass().getName();
     }
