@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import helios.server.geochat.service.GeoSecurityUserAuthenticationProvider;
+import helios.server.geochat.security.authenticationProvider.basicAuthenticationProvider.GeoSecurityBasicUserAuthenticationProvider;
 import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 
 @SpringBootApplication
@@ -42,7 +42,7 @@ public class MainApplication {
 
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
-		return new GeoSecurityUserAuthenticationProvider(geoSecurityUserServiceImpl, passwordEncoder());
+		return new GeoSecurityBasicUserAuthenticationProvider(geoSecurityUserServiceImpl, passwordEncoder());
 	}
 
 	@Bean

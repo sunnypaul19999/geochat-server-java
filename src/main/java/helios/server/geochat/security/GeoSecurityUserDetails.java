@@ -1,4 +1,4 @@
-package helios.server.geochat.service;
+package helios.server.geochat.security;
 
 import java.util.ArrayList;
 import java.util.Collection;

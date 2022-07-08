@@ -16,10 +16,8 @@ import helios.server.geochat.dto.request.VerifyGeoUserDTO;
 import helios.server.geochat.model.GeoUser;
 
 import helios.server.geochat.repository.GeoUserRepository;
-
-import helios.server.geochat.service.GeoSecurityUserDetails;
+import helios.server.geochat.security.GeoSecurityUserDetails;
 import helios.server.geochat.service.GeoUserService;
-
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
@@ -31,7 +29,7 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
     @Autowired
     GeoUserRepository geoUserRepository;
 
-    // @Override
+    @Override
     public boolean verifyUser(VerifyGeoUserDTO geoUserDTO) throws GeoUserException {
         try {
             GeoUser geoUser = getUser(geoUserDTO);
@@ -48,10 +46,6 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // (1)
-        // 1. Load the user from the users table by username. If not found, throw
-        // UsernameNotFoundException.
-        // 2. Convert/wrap the user to a UserDetails object and return it.
-        LoggerFactory.getLogger(getClass()).trace("*****************************************loadUserByUsername");
         try {
 
             GeoUser geoUser = getUser(new GeoUserDTO(username));
@@ -64,7 +58,7 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
         }
     }
 
-    // @Override
+    @Override
     public GeoUser getUser(GeoUserDTO geoUserDTO) throws GeoUserNotFoundException {
         Optional<GeoUser> geoUser = geoUserRepository.findByUsername(geoUserDTO.getUsername());
 
@@ -75,7 +69,7 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
         throw new GeoUserNotFoundException(geoUserDTO.getUsername(), "GET_USER");
     }
 
-    // @Override
+    @Override
     public void addUser(NewGeoUserDTO newGeoUserDTO) throws GeoUserException {
         final String operation = "ADD_USER";
 
@@ -99,7 +93,7 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
         }
     }
 
-    // @Override
+    @Override
     public void deleteUser(GeoUserDTO geoUserDTO) throws GeoUserException {
         try {
             GeoUser geoUser = getUser(geoUserDTO);

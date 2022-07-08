@@ -1,4 +1,4 @@
-package helios.server.geochat.service;
+package helios.server.geochat.security.authenticationProvider.basicAuthenticationProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,17 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import helios.server.geochat.exceptions.securityException.GeoUserAuthenticationException;
 import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 
-class AuthEx extends AuthenticationException {
-
-    public AuthEx(String msg) {
-        super(msg);
-    }
-
-}
-
-public class GeoSecurityUserAuthenticationProvider implements AuthenticationProvider {
+public class GeoSecurityBasicUserAuthenticationProvider implements AuthenticationProvider {
 
     private final Logger logger;
 
@@ -30,7 +23,7 @@ public class GeoSecurityUserAuthenticationProvider implements AuthenticationProv
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public GeoSecurityUserAuthenticationProvider(GeoSecurityUserServiceImpl geoSecurityUserServiceImpl,
+    public GeoSecurityBasicUserAuthenticationProvider(GeoSecurityUserServiceImpl geoSecurityUserServiceImpl,
             PasswordEncoder passwordEncoder) {
 
         this.geoSecurityUserServiceImpl = geoSecurityUserServiceImpl;
@@ -67,13 +60,13 @@ public class GeoSecurityUserAuthenticationProvider implements AuthenticationProv
 
         } catch (UsernameNotFoundException e) {
 
-            throw new AuthEx("You are not user of geochat I cant let you in!!!!!");
+            throw new GeoUserAuthenticationException("You are not user of geochat I cant let you in!!!!!");
 
         } catch (Exception e) {
 
             logger.error("Unknown exception occured while authenticating user", e);
 
-            throw new AuthEx("Something happend! we have no idea");
+            throw new GeoUserAuthenticationException("Something happend! we have no idea");
         }
 
     }
