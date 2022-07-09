@@ -28,6 +28,7 @@ public class MainApplication {
 		http
 				.cors().disable()
 				.csrf().disable()
+				.authenticationProvider(geoSecurityBasicUserAuthenticationProvider())//adding the authentication provider
 				.authorizeRequests()
 				.antMatchers(HttpMethod.POST, "/user/register").permitAll()
 				.antMatchers("/geochat/**").authenticated()
@@ -40,8 +41,9 @@ public class MainApplication {
 		return http.build();
 	}
 
+	//creating bean for basic authentication provider
 	@Bean
-	public AuthenticationProvider authenticationProvider() {
+	public GeoSecurityBasicUserAuthenticationProvider geoSecurityBasicUserAuthenticationProvider() {
 		return new GeoSecurityBasicUserAuthenticationProvider(geoSecurityUserServiceImpl, passwordEncoder());
 	}
 

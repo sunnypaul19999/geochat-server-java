@@ -2,6 +2,7 @@ package helios.server.geochat.security;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -9,23 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import helios.server.geochat.model.GeoUser;
-
-class GeoSecurityUserGrantedAuthoriy implements GrantedAuthority {
-
-    @NotNull
-    private final String authority;
-
-    GeoSecurityUserGrantedAuthoriy(String authority) {
-        this.authority = authority;
-    }
-
-    @Override
-    public String getAuthority() {
-
-        return this.authority;
-    }
-
-}
 
 public class GeoSecurityUserDetails implements UserDetails {
 
@@ -39,11 +23,7 @@ public class GeoSecurityUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        ArrayList<GeoSecurityUserGrantedAuthoriy> authorities = new ArrayList<>();
-
-        authorities.add(new GeoSecurityUserGrantedAuthoriy("USER"));
-
-        return authorities;
+        return List.of(new GeoSecurityUserGrantedAuthoriy("USER"));
     }
 
     @Override

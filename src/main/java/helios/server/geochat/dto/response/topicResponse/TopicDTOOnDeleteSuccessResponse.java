@@ -6,11 +6,22 @@ public class TopicDTOOnDeleteSuccessResponse extends TopicDTOResponse {
 
     private static final String MESSAGE = "Topic deleted!";
 
-    public static String getMessage() {
-        return MESSAGE;
-    }
+    private Integer id;
 
     public TopicDTOOnDeleteSuccessResponse(@NotNull int id) {
-        super(true, id);
+        super(true);
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public static String getMessage() {
+        return MESSAGE;
     }
 }

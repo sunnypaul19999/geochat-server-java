@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -54,9 +55,7 @@ public class GeoSecurityBasicUserAuthenticationProvider implements Authenticatio
                         userDetails.getAuthorities());
             }
 
-            return UsernamePasswordAuthenticationToken.unauthenticated(
-                    userDetails.getUsername(),
-                    userDetails.getPassword());
+            throw new BadCredentialsException("User sent invalid credential");
 
         } catch (UsernameNotFoundException e) {
 
@@ -79,7 +78,7 @@ public class GeoSecurityBasicUserAuthenticationProvider implements Authenticatio
                         authentication.isAssignableFrom(UsernamePasswordAuthenticationToken.class),
                         authentication.toGenericString()));
 
-        return authentication.isAssignableFrom(UsernamePasswordAuthenticationToken.class);
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
 }

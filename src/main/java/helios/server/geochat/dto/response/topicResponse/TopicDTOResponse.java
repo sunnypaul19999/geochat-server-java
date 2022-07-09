@@ -7,11 +7,8 @@ public class TopicDTOResponse {
     @NotNull
     private boolean executionStatus;
 
-    private Integer id;
-
-    public TopicDTOResponse(@NotNull boolean executionStatus, Integer id) {
+    public TopicDTOResponse(@NotNull boolean executionStatus) {
         this.executionStatus = executionStatus;
-        this.id = id;
     }
 
     public boolean getExecutionStatus() {
@@ -20,13 +17,5 @@ public class TopicDTOResponse {
 
     public void setExecutionStatus(boolean executionStatus) {
         this.executionStatus = executionStatus;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

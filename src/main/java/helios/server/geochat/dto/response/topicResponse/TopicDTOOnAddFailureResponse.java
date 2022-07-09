@@ -5,7 +5,7 @@ public class TopicDTOOnAddFailureResponse extends TopicDTOResponse {
     private static final String MESSAGE = "OOPS! Topic could not added";
 
     public TopicDTOOnAddFailureResponse() {
-        super(false, null);
+        super(false);
     }
 
     public String getMSG() {
