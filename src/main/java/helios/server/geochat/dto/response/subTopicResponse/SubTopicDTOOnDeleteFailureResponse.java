@@ -6,8 +6,11 @@ public class SubTopicDTOOnDeleteFailureResponse extends SubTopicDTOResponse {
 
     private static final String MESSAGE = "OOPS! SubTopic could not deleted";
 
+    private Integer id;
+
     public SubTopicDTOOnDeleteFailureResponse(@NotNull int id) {
-        super(false, id);
+        super(false);
+        this.id = id;
     }
 
     public static String getMessage() {

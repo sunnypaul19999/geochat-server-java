@@ -2,9 +2,13 @@ package helios.server.geochat.dto.request;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.Length;
 
+@JsonIgnoreProperties(value = "id")
 public class SubTopicDTO {
+    private int id;
+
     @NotNull
     @Length(min = 80, max = 250)
     private String title;
