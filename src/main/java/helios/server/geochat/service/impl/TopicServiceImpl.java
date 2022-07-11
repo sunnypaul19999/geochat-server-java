@@ -30,6 +30,30 @@ public class TopicServiceImpl implements TopicService {
   @Autowired TopicRepository topicRepository;
 
   @Override
+  public Topic getTopicEntityById(int topicId) throws TopicException {
+
+    try {
+      Optional<Topic> topic = topicRepository.findById(topicId);
+
+      if (topic.isPresent()) {
+
+        return topic.get();
+      }
+
+      throw new TopicNotFoundException(topicId, "GET_TOPIC_ENTITY_BY_ID");
+
+    } catch (TopicNotFoundException e) {
+
+      throw e;
+    } catch (Exception e) {
+
+      logger.error(e.getMessage(), e);
+
+      throw new TopicException("GET_TOPIC_ENTITY_BY_ID", e.getMessage());
+    }
+  }
+
+  @Override
   public TopicDTO getTopic(int id) throws TopicException {
 
     try {
@@ -61,14 +85,11 @@ public class TopicServiceImpl implements TopicService {
 
       Pageable pageable = PageRequest.of(pageNumber - 1, 5);
 
-      List<TopicDTO> list =
-          topicRepository
-              .findAll(pageable)
-              .map(topic -> new TopicDTO(topic.getTopicId(), topic.getTopicTitle()))
-              .stream()
-              .toList();
-
-      return list;
+      return topicRepository
+          .findAll(pageable)
+          .map(topic -> new TopicDTO(topic.getTopicId(), topic.getTopicTitle()))
+          .stream()
+          .toList();
 
     } catch (Exception e) {
 

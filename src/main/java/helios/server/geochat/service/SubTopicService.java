@@ -2,6 +2,7 @@ package helios.server.geochat.service;
 
 import java.util.List;
 
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import org.springframework.data.domain.Page;
 
 import helios.server.geochat.model.SubTopic;
@@ -12,13 +13,16 @@ import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceExcepti
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
 
 public interface SubTopicService {
-    SubTopic getSubTopicById(int subTopicId) throws SubTopicNotFoundException;
 
-    Page<SubTopic> getSubTopics(int pageNumber) throws SubTopicException;
+  SubTopic getSubTopicEntityById(int subTopicId) throws SubTopicNotFoundException;
 
-    List<SubTopic> getSubAllTopics() throws SubTopicException;
+  SubTopicDTO getSubTopicById(int subTopicId) throws SubTopicNotFoundException;
 
-    SubTopic deleteSubTopic(int topicId) throws SubTopicException;
+  List<SubTopicDTO> getSubTopicsByPaged(int pageNumber) throws SubTopicException;
 
-    SubTopic addSubTopic(SubTopicDTO topicDTO) throws SubTopicException;
+  List<SubTopicDTO> getSubAllTopics() throws SubTopicException;
+
+  SubTopicDTO deleteSubTopic(int topicId) throws SubTopicException;
+
+  SubTopicDTO addSubTopic(SubTopicDTO topicDTO) throws SubTopicException, TopicException;
 }

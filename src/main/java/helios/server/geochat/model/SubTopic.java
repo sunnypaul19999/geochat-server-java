@@ -28,8 +28,8 @@ public class SubTopic {
     }
 
     public SubTopic(SubTopicDTO subTopicDTO) {
-        this.title = subTopicDTO.getTitle();
-        this.description = subTopicDTO.getDescription();
+        this.title = subTopicDTO.getSubTopicTitle();
+        this.description = subTopicDTO.getSubTopicDescription();
     }
 
     public int getId() {

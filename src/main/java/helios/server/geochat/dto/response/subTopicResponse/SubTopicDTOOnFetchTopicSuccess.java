@@ -4,9 +4,8 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import helios.server.geochat.dto.request.SubTopicDTO;
-import helios.server.geochat.dto.response.topicResponse.TopicDTOResponse;
 
-public class SubTopicDTOOnFetchTopicSuccess extends TopicDTOResponse {
+public class SubTopicDTOOnFetchTopicSuccess extends SubTopicDTOResponse {
     private static final String MESSAGE = "Topic added successfully!";
 
     List<SubTopicDTO> subtopic;

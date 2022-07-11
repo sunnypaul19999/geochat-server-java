@@ -2,41 +2,66 @@ package helios.server.geochat.dto.request;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 
-@JsonIgnoreProperties(value = "id")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SubTopicDTO {
-    private int id;
 
-    @NotNull
-    @Length(min = 80, max = 250)
-    private String title;
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private int subTopicId;
 
-    @NotNull
-    @Length(min = 80, max = 4000)
-    private String description;
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  private int topicId;
 
-    public SubTopicDTO(
-            @NotNull @Length(min = 80, max = 250) String title,
-            @NotNull @Length(min = 80, max = 4000) String description) {
-        this.title = title;
-        this.description = description;
-    }
+  @NotNull
+  @Length(min = 2, max = 250)
+  private String subTopicTitle;
 
-    public String getTitle() {
-        return title;
-    }
+  @NotNull
+  @Length(min = 2, max = 4000)
+  private String subTopicDescription;
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public SubTopicDTO() {}
 
-    public String getDescription() {
-        return description;
-    }
+  public SubTopicDTO(String subTopicTitle, String description) {
+    this.subTopicTitle = subTopicTitle;
+    this.subTopicDescription = description;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public SubTopicDTO(int subTopicId, String subTopicTitle, String description) {
+    this.subTopicId = subTopicId;
+    this.subTopicTitle = subTopicTitle;
+    this.subTopicDescription = description;
+  }
+
+  public int getSubTopicId() {
+    return subTopicId;
+  }
+
+  public int getTopicId() {
+    return topicId;
+  }
+
+  public void setTopicId(int topicId) {
+    this.topicId = topicId;
+  }
+
+  public String getSubTopicTitle() {
+    return subTopicTitle;
+  }
+
+  public void setSubTopicTitle(String subTopicTitle) {
+    this.subTopicTitle = subTopicTitle;
+  }
+
+  public String getSubTopicDescription() {
+    return subTopicDescription;
+  }
+
+  public void setSubTopicDescription(String subTopicDescription) {
+    this.subTopicDescription = subTopicDescription;
+  }
 }

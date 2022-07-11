@@ -2,13 +2,19 @@ package helios.server.geochat.dto.response.subTopicResponse;
 
 public class SubTopicDTOOnFetchTopicFailure extends SubTopicDTOResponse {
 
-    private static final String MESSAGE = "OOPs! failed to fetch topics";
+  private final String message;
 
-    public SubTopicDTOOnFetchTopicFailure() {
-        super(true);
-    }
+  public SubTopicDTOOnFetchTopicFailure() {
+    super(false);
+    this.message = "OOPs! failed to fetch topics";
+  }
 
-    public static String getMessage() {
-        return MESSAGE;
-    }
+  public SubTopicDTOOnFetchTopicFailure(String message) {
+    super(false);
+    this.message = message;
+  }
+
+  public String getMessage() {
+    return message;
+  }
 }

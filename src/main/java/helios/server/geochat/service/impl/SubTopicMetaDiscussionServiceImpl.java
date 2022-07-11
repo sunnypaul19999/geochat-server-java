@@ -53,7 +53,7 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
             GeoUserDTO geoUserReceiverDTO = new GeoUserDTO(subTopicMetaDiscussDTO.getReceiverUsername());
 
             GeoUser geoUser = geoUserServiceImpl.getUser(geoUserReceiverDTO);
-            SubTopic subTopic = subTopicServiceImpl.getSubTopicById(subTopicMetaDiscussDTO.getSubTopicId());
+            SubTopic subTopic = subTopicServiceImpl.getSubTopicEntityById(subTopicMetaDiscussDTO.getSubTopicId());
 
             SubTopicMetaDiscussion subTopicMetaDiscussion = new SubTopicMetaDiscussion(
                     subTopicMetaDiscussDTO.getMessage(),
