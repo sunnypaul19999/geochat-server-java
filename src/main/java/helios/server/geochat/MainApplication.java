@@ -15,49 +15,77 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import helios.server.geochat.security.authenticationProvider.basicAuthenticationProvider.GeoSecurityBasicUserAuthenticationProvider;
 import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @SpringBootApplication
 @EnableWebSecurity
 public class MainApplication {
 
-	@Autowired
-	GeoSecurityUserServiceImpl geoSecurityUserServiceImpl;
+  @Autowired GeoSecurityUserServiceImpl geoSecurityUserServiceImpl;
 
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-				.cors().disable()
-				.csrf().disable()
-				.authenticationProvider(geoSecurityBasicUserAuthenticationProvider())//adding the authentication provider
-				.authorizeRequests()
-				.antMatchers(HttpMethod.POST, "/user/register").permitAll()
-				.antMatchers("/geochat/**").authenticated()
-				.anyRequest().authenticated()
-				.and()
-				.formLogin().loginProcessingUrl("/user/authenticate")
-				.and()
-				.httpBasic();
+  //  @Bean
+  //  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  //    http.csrf()
+  //        .disable()
+  //        .cors(
+  //            corsConfigurer -> {
+  //              CorsConfigurationSource configurationSource =
+  //                  httpRequest -> {
+  //                    CorsConfiguration corsConfiguration = new CorsConfiguration();
+  //                    corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+  //                    corsConfiguration.setAllowCredentials(true);
+  //                    corsConfiguration.addAllowedHeader("");
+  //                    corsConfiguration.setAllowedMethods(
+  //                        List.of(HttpMethod.GET.toString(), HttpMethod.POST.toString()));
+  //
+  //                    return corsConfiguration;
+  //                  };
+  //
+  //              corsConfigurer.configurationSource(configurationSource);
+  //            })
+  //        .authenticationProvider(
+  //            geoSecurityBasicUserAuthenticationProvider()) // adding the authentication provider
+  //        .authorizeRequests()
+  //        .antMatchers(HttpMethod.POST, "/user/register")
+  //        .permitAll()
+  //        .anyRequest()
+  //        .permitAll()
+  //        .and()
+  //        .httpBasic();
+  //
+  //    return http.build();
+  //  }
 
-		return http.build();
-	}
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-	//creating bean for basic authentication provider
-	@Bean
-	public GeoSecurityBasicUserAuthenticationProvider geoSecurityBasicUserAuthenticationProvider() {
-		return new GeoSecurityBasicUserAuthenticationProvider(geoSecurityUserServiceImpl, passwordEncoder());
-	}
+    http.csrf().disable().cors().disable().authorizeRequests().anyRequest().permitAll();
 
-	@Bean
-	public UserDetailsService userDetailsService() {
-		return geoSecurityUserServiceImpl;
-	}
+    return http.build();
+  }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return NoOpPasswordEncoder.getInstance();
-	}
+  // creating bean for basic authentication provider
+  @Bean
+  public GeoSecurityBasicUserAuthenticationProvider geoSecurityBasicUserAuthenticationProvider() {
+    return new GeoSecurityBasicUserAuthenticationProvider(
+        geoSecurityUserServiceImpl, passwordEncoder());
+  }
 
-	public static void main(String[] args) {
-		SpringApplication.run(MainApplication.class, args);
-	}
+  @Bean
+  public UserDetailsService userDetailsService() {
+    return geoSecurityUserServiceImpl;
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return NoOpPasswordEncoder.getInstance();
+  }
+
+  public static void main(String[] args) {
+    SpringApplication.run(MainApplication.class, args);
+  }
 }

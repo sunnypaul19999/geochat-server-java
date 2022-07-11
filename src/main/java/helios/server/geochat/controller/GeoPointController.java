@@ -11,12 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import helios.server.geochat.dto.request.UserLocationDTO;
 import helios.server.geochat.dto.response.geoPointResponse.GeoPointDTOOnRegisterFailureResponse;
@@ -73,7 +68,7 @@ public class GeoPointController {
         return new GeoPointDTOOnRegisterFailureResponse();
     }
 
-    @PostMapping(value = "/description")
+    @GetMapping(value = "/description")
     public String description() {
         return this.getClass().getName();
     }

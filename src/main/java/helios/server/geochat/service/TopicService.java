@@ -2,19 +2,19 @@ package helios.server.geochat.service;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-
 import helios.server.geochat.dto.request.TopicDTO;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.model.Topic;
 
 public interface TopicService {
 
-    Page<Topic> getTopics(int pageNumber) throws TopicException;
+    TopicDTO getTopic(int id) throws  TopicException;
 
-    List<Topic> getAllTopics() throws TopicException;
+    List<TopicDTO> getTopicsByPage(int pageNumber) throws TopicException;
 
-    Topic deleteTopic(int topicId) throws TopicException;
+    List<TopicDTO> getAllTopics() throws TopicException;
 
-    Topic addTopic(TopicDTO topicDTO) throws TopicException;
+    TopicDTO deleteTopic(int topicId) throws TopicException;
+
+    TopicDTO addTopic(TopicDTO topicDTO) throws TopicException;
 }
