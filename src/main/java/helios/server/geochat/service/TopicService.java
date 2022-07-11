@@ -4,7 +4,6 @@ import java.util.List;
 
 import helios.server.geochat.dto.request.TopicDTO;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
-import helios.server.geochat.model.Topic;
 
 public interface TopicService {
 

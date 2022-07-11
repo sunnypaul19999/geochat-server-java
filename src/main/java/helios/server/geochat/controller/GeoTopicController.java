@@ -60,7 +60,7 @@ public class GeoTopicController {
 
       response.setStatus(404);
 
-      new TopicDTOOnFetchTopicFailure("Page number not in range");
+      return new TopicDTOOnFetchTopicFailure("Page number not in range");
 
     } catch (TopicException e) {
 

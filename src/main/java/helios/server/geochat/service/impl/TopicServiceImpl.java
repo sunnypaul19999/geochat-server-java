@@ -3,7 +3,6 @@ package helios.server.geochat.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import helios.server.geochat.dto.response.topicResponse.TopicDTOOnFetchTopicFailure;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicPageNumberNotInRangeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
