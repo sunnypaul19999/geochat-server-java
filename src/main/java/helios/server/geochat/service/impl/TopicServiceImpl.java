@@ -54,7 +54,7 @@ public class TopicServiceImpl implements TopicService {
   }
 
   @Override
-  public TopicDTO getTopic(int id) throws TopicException {
+  public TopicDTO getTopicById(int id) throws TopicException {
 
     try {
 
@@ -74,7 +74,7 @@ public class TopicServiceImpl implements TopicService {
   }
 
   @Override
-  public List<TopicDTO> getTopicsByPage(int pageNumber) throws TopicException {
+  public List<TopicDTO> getPagedTopics(int pageNumber) throws TopicException {
 
     if (pageNumber <= 0) {
 
@@ -111,6 +111,30 @@ public class TopicServiceImpl implements TopicService {
     } catch (Exception e) {
 
       throw new TopicException("GET_ALL_TOPICS", e.getMessage());
+    }
+  }
+
+  @Override
+  public void updateTopic(TopicDTO topicDTO) throws TopicException {
+
+    try {
+
+      Topic topic = getTopicEntityById(topicDTO.getId());
+
+      topic.setTopicTitle(topicDTO.getTopicTitle());
+
+      topicRepository.save(topic);
+
+    } catch (TopicNotFoundException e) {
+
+      throw e;
+
+    } catch (TopicException e) {
+
+      logger.error(String.format("UPDATE_TOPIC %s", topicDTO.toString()), e);
+
+      throw new TopicException(
+          String.format("UPDATE_TOPIC %s", topicDTO.toString()), e.getMessage());
     }
   }
 

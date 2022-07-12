@@ -1,9 +1,8 @@
 package helios.server.geochat.controller;
 
 import helios.server.geochat.dto.request.TopicDTO;
-import helios.server.geochat.dto.response.topicResponse.TopicDTOOnFetchTopicFailure;
-import helios.server.geochat.dto.response.topicResponse.TopicDTOOnFetchTopicSuccess;
-import helios.server.geochat.dto.response.topicResponse.TopicDTOResponse;
+import helios.server.geochat.dto.response.topicResponse.*;
+import helios.server.geochat.exceptions.dtoException.InvalidDTOFieldValueException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicPageNumberNotInRangeException;
@@ -11,6 +10,7 @@ import helios.server.geochat.service.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping(path = "/geopoint/topic")
 public class GeoTopicController {
 
-  private Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Autowired TopicService topicService;
 
@@ -30,7 +30,7 @@ public class GeoTopicController {
 
     try {
 
-      TopicDTO topicDTO = topicService.getTopic(id);
+      TopicDTO topicDTO = topicService.getTopicById(id);
 
       return new TopicDTOOnFetchTopicSuccess(List.of(topicDTO));
 
@@ -52,7 +52,7 @@ public class GeoTopicController {
 
     try {
 
-      List<TopicDTO> topicDTOList = topicService.getTopicsByPage(pageNumber);
+      List<TopicDTO> topicDTOList = topicService.getPagedTopics(pageNumber);
 
       return new TopicDTOOnFetchTopicSuccess(topicDTOList);
 
@@ -93,22 +93,80 @@ public class GeoTopicController {
 
   @PostMapping(path = "/add")
   public TopicDTOResponse addTopic(
-      @Valid @RequestBody TopicDTO topicDTO, HttpServletResponse response) {
+      @Valid @RequestBody TopicDTO topicDTO,
+      BindingResult bindingResult,
+      HttpServletResponse response) {
 
     try {
 
+      if (bindingResult.hasErrors()) {
+
+        throw new InvalidDTOFieldValueException();
+      }
+
       TopicDTO persistedTopicDTO = topicService.addTopic(topicDTO);
 
-      return new TopicDTOOnFetchTopicSuccess(List.of(persistedTopicDTO));
+      return new TopicDTOOnAddSuccessResponse(persistedTopicDTO.getId());
+
+    } catch (InvalidDTOFieldValueException e) {
+
+      response.setStatus(406);
+
+      return new TopicDTOOnAddFailureResponse(e.getMessage());
 
     } catch (TopicException e) {
 
       logger.error(e.getMessage(), e);
 
       response.setStatus(500);
-    }
 
-    return new TopicDTOOnFetchTopicFailure();
+      return new TopicDTOOnFetchTopicFailure();
+    }
+  }
+
+  @PutMapping(path = "/update/{topicId}")
+  public TopicDTOResponse updateSubTopic(
+      @PathVariable("topicId") int topicId,
+      @Valid @RequestBody TopicDTO topicDTO,
+      BindingResult bindingResult,
+      HttpServletResponse response) {
+
+    try {
+
+      if (bindingResult.hasErrors()) {
+
+        throw new InvalidDTOFieldValueException();
+      }
+
+      // setting topicId received as path variable
+      topicDTO.setId(topicId);
+
+      topicService.updateTopic(topicDTO);
+
+      return new TopicDTOOnUpdateTopicSuccess();
+
+    } catch (InvalidDTOFieldValueException e) {
+
+      response.setStatus(406);
+
+      return new TopicDTOOnUpdateFailureResponse(e.getMessage());
+
+    } catch (TopicNotFoundException e) {
+
+      logger.info(e.getMessage(), e);
+
+      response.setStatus(404);
+
+      return new TopicDTOOnUpdateFailureResponse("Topic not found!");
+
+    } catch (TopicException e) {
+
+      logger.error(e.getMessage(), e);
+
+      response.setStatus(500);
+
+      return new TopicDTOOnUpdateFailureResponse();
+    }
   }
 
   @DeleteMapping(path = "/delete/{id}")

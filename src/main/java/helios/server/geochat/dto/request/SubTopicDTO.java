@@ -41,6 +41,10 @@ public class SubTopicDTO {
     return subTopicId;
   }
 
+  public void setSubTopicId(int subTopicId) {
+    this.subTopicId = subTopicId;
+  }
+
   public int getTopicId() {
     return topicId;
   }
@@ -63,5 +67,10 @@ public class SubTopicDTO {
 
   public void setSubTopicDescription(String subTopicDescription) {
     this.subTopicDescription = subTopicDescription;
+  }
+
+  @Override
+  public String toString() {
+    return "SubTopicDTO{" + "subTopicId=" + subTopicId + ", topicId=" + topicId + '}';
   }
 }

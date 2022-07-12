@@ -8,6 +8,8 @@ import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceExcepti
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.model.Topic;
 import helios.server.geochat.service.TopicService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,9 +26,12 @@ import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceExcepti
 @Service
 public class SubTopicServiceImpl implements SubTopicService {
 
+  private Logger logger = LoggerFactory.getLogger(getClass());
+
   @Autowired TopicService topicService;
 
   @Autowired SubTopicRepository subTopicRepository;
+  private Exception e;
 
   @Override
   public SubTopic getSubTopicEntityById(int subTopicId) throws SubTopicNotFoundException {
@@ -56,7 +61,7 @@ public class SubTopicServiceImpl implements SubTopicService {
   }
 
   @Override
-  public List<SubTopicDTO> getSubTopicsByPaged(int pageNumber) throws SubTopicException {
+  public List<SubTopicDTO> getPagedSubTopics(int pageNumber) throws SubTopicException {
 
     if (pageNumber <= 0) {
 
@@ -65,7 +70,7 @@ public class SubTopicServiceImpl implements SubTopicService {
 
     try {
 
-      PageRequest pageable = PageRequest.of(pageNumber, 5);
+      PageRequest pageable = PageRequest.of(pageNumber - 1, 5);
 
       return subTopicRepository
           .findAll(pageable)
@@ -98,6 +103,58 @@ public class SubTopicServiceImpl implements SubTopicService {
   }
 
   @Override
+  public SubTopicDTO addSubTopic(SubTopicDTO subTopicDTO) throws SubTopicException, TopicException {
+
+    SubTopic subTopic;
+
+    try {
+
+      subTopic = new SubTopic(subTopicDTO);
+
+      Topic topic = topicService.getTopicEntityById(subTopicDTO.getTopicId());
+
+      subTopic.setTopic(topic);
+
+      subTopic = subTopicRepository.save(subTopic);
+
+      return new SubTopicDTO(subTopic.getId(), subTopic.getTitle(), subTopic.getDescription());
+
+    } catch (TopicException e) {
+
+      throw e;
+
+    } catch (Exception e) {
+
+      throw new SubTopicException("ADD", e.getMessage());
+    }
+  }
+
+  @Override
+  public void updateSubTopic(SubTopicDTO subTopicDTO) throws SubTopicException {
+    try {
+
+      SubTopic subTopic = getSubTopicEntityById(subTopicDTO.getSubTopicId());
+
+      subTopic.setTitle(subTopicDTO.getSubTopicTitle());
+
+      subTopic.setDescription(subTopicDTO.getSubTopicDescription());
+
+      subTopicRepository.save(subTopic);
+
+    } catch (SubTopicNotFoundException e) {
+
+      throw e;
+
+    } catch (Exception e) {
+
+      logger.error(String.format("UPDATE_SUBTOPIC %s", subTopicDTO.toString()), e);
+
+      throw new SubTopicException(
+          String.format("UPDATE_SUBTOPIC %s", subTopicDTO.toString()), e.getMessage());
+    }
+  }
+
+  @Override
   public SubTopicDTO deleteSubTopic(int subTopicId) throws SubTopicException {
 
     try {
@@ -117,31 +174,6 @@ public class SubTopicServiceImpl implements SubTopicService {
     } catch (Exception e) {
 
       throw new SubTopicException("DELETE", e.getMessage());
-    }
-  }
-
-  @Override
-  public SubTopicDTO addSubTopic(SubTopicDTO subTopicDTO) throws SubTopicException, TopicException {
-
-    SubTopic subTopic;
-
-    try {
-
-      subTopic = new SubTopic(subTopicDTO);
-
-      Topic topic = topicService.getTopicEntityById(subTopicDTO.getTopicId());
-
-      subTopic.setTopic(topic);
-
-      subTopic = subTopicRepository.save(subTopic);
-
-      return new SubTopicDTO(subTopic.getId(), subTopic.getTitle(), subTopic.getDescription());
-
-    } catch (TopicException e) {
-      throw e;
-    } catch (Exception e) {
-
-      throw new SubTopicException("ADD", e.getMessage());
     }
   }
 }

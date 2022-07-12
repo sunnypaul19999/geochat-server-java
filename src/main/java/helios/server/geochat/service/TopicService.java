@@ -10,11 +10,13 @@ public interface TopicService {
 
   Topic getTopicEntityById(int topicId) throws TopicException;
 
-  TopicDTO getTopic(int id) throws TopicException;
+  TopicDTO getTopicById(int id) throws TopicException;
 
-  List<TopicDTO> getTopicsByPage(int pageNumber) throws TopicException;
+  List<TopicDTO> getPagedTopics(int pageNumber) throws TopicException;
 
   List<TopicDTO> getAllTopics() throws TopicException;
+
+  void updateTopic(TopicDTO topicDTO) throws TopicException;
 
   TopicDTO deleteTopic(int topicId) throws TopicException;
 

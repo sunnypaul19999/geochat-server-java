@@ -4,20 +4,20 @@ import javax.validation.constraints.NotNull;
 
 public class SubTopicDTOOnAddSuccessResponse extends SubTopicDTOResponse {
 
-    private static final String MESSAGE = "SubTopic added successfully!";
+  private static final String MESSAGE = "SubTopic added successfully!";
 
-    private Integer id;
+  private int subTopicId;
 
-    public SubTopicDTOOnAddSuccessResponse(@NotNull int id) {
-        super(true);
-        this.id = id;
-    }
+  public SubTopicDTOOnAddSuccessResponse(@NotNull int subTopicId) {
+    super(true);
+    this.subTopicId = subTopicId;
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public int getSubTopicId() {
+    return subTopicId;
+  }
 
-    public static String getMessage() {
-        return MESSAGE;
-    }
+  public static String getMessage() {
+    return MESSAGE;
+  }
 }

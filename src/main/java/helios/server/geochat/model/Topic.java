@@ -30,7 +30,7 @@ public class Topic {
     }
 
     public Topic(TopicDTO topicDTO) {
-        this.topicTitle = topicDTO.getTitle();
+        this.topicTitle = topicDTO.getTopicTitle();
     }
 
     public int getTopicId() {

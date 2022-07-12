@@ -5,12 +5,12 @@ import javax.validation.constraints.NotNull;
 
 import helios.server.geochat.dto.request.SubTopicDTO;
 
-public class SubTopicDTOOnFetchTopicSuccess extends SubTopicDTOResponse {
+public class SubTopicDTOOnFetchSuccessRespnse extends SubTopicDTOResponse {
     private static final String MESSAGE = "Topic added successfully!";
 
     List<SubTopicDTO> subtopic;
 
-    public SubTopicDTOOnFetchTopicSuccess(@NotNull List<SubTopicDTO> subtopic) {
+    public SubTopicDTOOnFetchSuccessRespnse(@NotNull List<SubTopicDTO> subtopic) {
         super(true);
         this.subtopic = subtopic;
     }

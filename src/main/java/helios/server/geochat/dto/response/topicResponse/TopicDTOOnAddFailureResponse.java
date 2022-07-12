@@ -2,13 +2,19 @@ package helios.server.geochat.dto.response.topicResponse;
 
 public class TopicDTOOnAddFailureResponse extends TopicDTOResponse {
 
-    private static final String MESSAGE = "OOPS! Topic could not added";
+  private final String message;
 
-    public TopicDTOOnAddFailureResponse() {
-        super(false);
-    }
+  public TopicDTOOnAddFailureResponse() {
+    super(false);
+    this.message = "OOPS! Topic could not added";
+  }
 
-    public String getMSG() {
-        return MESSAGE;
-    }
+  public TopicDTOOnAddFailureResponse(String message) {
+    super(false);
+    this.message = message;
+  }
+
+  public String getMSG() {
+    return message;
+  }
 }

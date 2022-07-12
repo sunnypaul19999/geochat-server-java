@@ -1,14 +1,12 @@
 package helios.server.geochat.controller;
 
-import helios.server.geochat.dto.response.subTopicResponse.SubTopicDTOOnAddFailureResponse;
+import helios.server.geochat.dto.response.subTopicResponse.*;
+import helios.server.geochat.exceptions.dtoException.InvalidDTOFieldValueException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 import helios.server.geochat.service.SubTopicService;
 
 import helios.server.geochat.dto.request.SubTopicDTO;
-import helios.server.geochat.dto.response.subTopicResponse.SubTopicDTOOnFetchTopicFailure;
-import helios.server.geochat.dto.response.subTopicResponse.SubTopicDTOOnFetchTopicSuccess;
-import helios.server.geochat.dto.response.subTopicResponse.SubTopicDTOResponse;
 
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicException;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
@@ -17,6 +15,7 @@ import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceExcepti
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,14 +38,14 @@ public class GeoSubTopicController {
 
       SubTopicDTO subTopicDTO = subTopicService.getSubTopicById(subTopicId);
 
-      return new SubTopicDTOOnFetchTopicSuccess(List.of(subTopicDTO));
+      return new SubTopicDTOOnFetchSuccessRespnse(List.of(subTopicDTO));
 
     } catch (SubTopicNotFoundException e) {
 
       response.setStatus(404);
     }
 
-    return new SubTopicDTOOnFetchTopicFailure();
+    return new SubTopicDTOOnFetchFailureResponse();
   }
 
   @GetMapping(path = "/page/{pageNumber}")
@@ -55,15 +54,15 @@ public class GeoSubTopicController {
 
     try {
 
-      List<SubTopicDTO> subTopicDTOList = subTopicService.getSubTopicsByPaged(pageNumber);
+      List<SubTopicDTO> subTopicDTOList = subTopicService.getPagedSubTopics(pageNumber);
 
-      return new SubTopicDTOOnFetchTopicSuccess(subTopicDTOList);
+      return new SubTopicDTOOnFetchSuccessRespnse(subTopicDTOList);
 
     } catch (SubTopicPageNumberNotInRangeException e) {
 
       response.setStatus(404);
 
-      return new SubTopicDTOOnFetchTopicFailure("Page number not in range");
+      return new SubTopicDTOOnFetchFailureResponse("Page number not in range");
 
     } catch (SubTopicException e) {
 
@@ -72,7 +71,7 @@ public class GeoSubTopicController {
       response.setStatus(500);
     }
 
-    return new SubTopicDTOOnFetchTopicFailure();
+    return new SubTopicDTOOnFetchFailureResponse();
   }
 
   @GetMapping(path = "/all")
@@ -82,7 +81,7 @@ public class GeoSubTopicController {
 
       List<SubTopicDTO> SubTopicDTOList = subTopicService.getSubAllTopics();
 
-      return new SubTopicDTOOnFetchTopicSuccess(SubTopicDTOList);
+      return new SubTopicDTOOnFetchSuccessRespnse(SubTopicDTOList);
 
     } catch (SubTopicException e) {
 
@@ -91,35 +90,91 @@ public class GeoSubTopicController {
       response.setStatus(500);
     }
 
-    return new SubTopicDTOOnFetchTopicFailure();
+    return new SubTopicDTOOnFetchFailureResponse();
   }
 
   @PostMapping(path = "/add")
   public SubTopicDTOResponse addTopic(
-      @Valid @RequestBody SubTopicDTO subTopicDTO, HttpServletResponse response) {
+      @Valid @RequestBody SubTopicDTO subTopicDTO,
+      BindingResult bindingResult,
+      HttpServletResponse response) {
 
     try {
 
+      if (bindingResult.hasErrors()) {
+
+        throw new InvalidDTOFieldValueException();
+      }
+
       SubTopicDTO persistedSubTopicDTO = subTopicService.addSubTopic(subTopicDTO);
 
-      return new SubTopicDTOOnFetchTopicSuccess(List.of(persistedSubTopicDTO));
+      return new SubTopicDTOOnAddSuccessResponse(persistedSubTopicDTO.getSubTopicId());
+
+    } catch (InvalidDTOFieldValueException e) {
+
+      response.setStatus(406);
+
+      return new SubTopicDTOOnAddFailureResponse(e.getMessage());
 
     } catch (TopicNotFoundException e) {
 
-      logger.info(e.getMessage(), e);
-
       response.setStatus(404);
 
-      return new SubTopicDTOOnAddFailureResponse("Topic does not exists");
+      return new SubTopicDTOOnAddFailureResponse("Topic not found");
 
     } catch (SubTopicException | TopicException e) {
 
       logger.error(e.getMessage(), e);
 
       response.setStatus(500);
-    }
 
-    return new SubTopicDTOOnFetchTopicFailure();
+      return new SubTopicDTOOnAddFailureResponse();
+    }
+  }
+
+  @PutMapping(path = "/update/{subTopicId}")
+  public SubTopicDTOResponse updateSubTopic(
+      @PathVariable("subTopicId") int subTopicId,
+      @Valid @RequestBody SubTopicDTO subTopicDTO,
+      BindingResult bindingResult,
+      HttpServletResponse response) {
+
+    try {
+
+      if (bindingResult.hasErrors()) {
+
+        throw new InvalidDTOFieldValueException();
+      }
+
+      // setting the subTopicId received from path variable
+      subTopicDTO.setSubTopicId(subTopicId);
+
+      subTopicService.updateSubTopic(subTopicDTO);
+
+      return new SubTopicDTOOnUpdateSuccessResponse();
+
+    } catch (InvalidDTOFieldValueException e) {
+
+      response.setStatus(406);
+
+      return new SubTopicDTOOnUpdateFailureResponse(e.getMessage());
+
+    } catch (SubTopicNotFoundException e) {
+
+      logger.info(e.getMessage(), e);
+
+      response.setStatus(404);
+
+      return new SubTopicDTOOnUpdateFailureResponse("SubTopic not found!");
+
+    } catch (SubTopicException e) {
+
+      logger.error(e.getMessage(), e);
+
+      response.setStatus(500);
+
+      return new SubTopicDTOOnUpdateFailureResponse();
+    }
   }
 
   @DeleteMapping(path = "/delete/{subTopicId}")
@@ -130,7 +185,7 @@ public class GeoSubTopicController {
 
       SubTopicDTO SubTopicDTO = subTopicService.deleteSubTopic(subTopicId);
 
-      return new SubTopicDTOOnFetchTopicSuccess(List.of(SubTopicDTO));
+      return new SubTopicDTOOnFetchSuccessRespnse(List.of(SubTopicDTO));
 
     } catch (SubTopicException e) {
 
@@ -139,6 +194,6 @@ public class GeoSubTopicController {
       response.setStatus(500);
     }
 
-    return new SubTopicDTOOnFetchTopicFailure();
+    return new SubTopicDTOOnFetchFailureResponse();
   }
 }
