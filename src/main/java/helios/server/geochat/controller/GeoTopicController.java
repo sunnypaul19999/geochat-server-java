@@ -1,8 +1,8 @@
 package helios.server.geochat.controller;
 
 import helios.server.geochat.dto.request.TopicDTO;
+import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
 import helios.server.geochat.dto.response.topicResponse.*;
-import helios.server.geochat.exceptions.dtoException.InvalidDTOFieldValueException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicPageNumberNotInRangeException;
@@ -95,24 +95,19 @@ public class GeoTopicController {
   public TopicDTOResponse addTopic(
       @Valid @RequestBody TopicDTO topicDTO,
       BindingResult bindingResult,
-      HttpServletResponse response) {
+      HttpServletResponse response)
+      throws InvalidRequestFormatException {
 
     try {
 
       if (bindingResult.hasErrors()) {
 
-        throw new InvalidDTOFieldValueException();
+        throw new InvalidRequestFormatException();
       }
 
       TopicDTO persistedTopicDTO = topicService.addTopic(topicDTO);
 
       return new TopicDTOOnAddSuccessResponse(persistedTopicDTO.getId());
-
-    } catch (InvalidDTOFieldValueException e) {
-
-      response.setStatus(406);
-
-      return new TopicDTOOnAddFailureResponse(e.getMessage());
 
     } catch (TopicException e) {
 
@@ -129,13 +124,14 @@ public class GeoTopicController {
       @PathVariable("topicId") int topicId,
       @Valid @RequestBody TopicDTO topicDTO,
       BindingResult bindingResult,
-      HttpServletResponse response) {
+      HttpServletResponse response)
+      throws InvalidRequestFormatException {
 
     try {
 
       if (bindingResult.hasErrors()) {
 
-        throw new InvalidDTOFieldValueException();
+        throw new InvalidRequestFormatException();
       }
 
       // setting topicId received as path variable
@@ -144,12 +140,6 @@ public class GeoTopicController {
       topicService.updateTopic(topicDTO);
 
       return new TopicDTOOnUpdateTopicSuccess();
-
-    } catch (InvalidDTOFieldValueException e) {
-
-      response.setStatus(406);
-
-      return new TopicDTOOnUpdateFailureResponse(e.getMessage());
 
     } catch (TopicNotFoundException e) {
 

@@ -3,6 +3,7 @@ package helios.server.geochat.controller;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import helios.server.geochat.dto.request.NewGeoUserDTO;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterFailureResponse;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterSuccessResponse;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOResponse;
-import helios.server.geochat.exceptions.dtoException.InvalidDTOFieldValueException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
@@ -30,81 +30,77 @@ import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 @RequestMapping(value = "/user")
 public class GeoUserController {
 
-    @Autowired
-    GeoSecurityUserServiceImpl geoUserServiceImpl;
+  @Autowired GeoSecurityUserServiceImpl geoUserServiceImpl;
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+  private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @PostMapping(value = "/register")
-    public GeoUserDTOResponse registerGeoPoint(
-            HttpServletResponse resp,
-            @Valid @RequestBody NewGeoUserDTO newGeoUserDTO,
-            BindingResult bindingResult) {
-        try {
-            if (bindingResult.hasErrors()) {
-                throw new InvalidDTOFieldValueException();
-            }
+  @PostMapping(value = "/register")
+  public GeoUserDTOResponse registerGeoPoint(
+      HttpServletResponse resp,
+      @Valid @RequestBody NewGeoUserDTO newGeoUserDTO,
+      BindingResult bindingResult)
+      throws InvalidRequestFormatException {
+    try {
+      if (bindingResult.hasErrors()) {
+        throw new InvalidRequestFormatException();
+      }
 
-            geoUserServiceImpl.addUser(newGeoUserDTO);
+      geoUserServiceImpl.addUser(newGeoUserDTO);
 
-            resp.setStatus(200);
-            GeoUserDTOOnRegiseterSuccessResponse geoUserDTOOnRegiseterSuccessResponse = new GeoUserDTOOnRegiseterSuccessResponse();
+      resp.setStatus(200);
+      GeoUserDTOOnRegiseterSuccessResponse geoUserDTOOnRegiseterSuccessResponse =
+          new GeoUserDTOOnRegiseterSuccessResponse();
 
-            return geoUserDTOOnRegiseterSuccessResponse;
+      return geoUserDTOOnRegiseterSuccessResponse;
 
-        } catch (InvalidDTOFieldValueException e) {
-            logger.info("rejecting userLocationDTO values sent by user. Not valid has binding errors %s",
-                    newGeoUserDTO.toString());
+    } catch (GeoUserConfirmPasswordMismatchException e) {
+      logger.info(
+          "Password and Confirm Password mismatch occured while registering",
+          newGeoUserDTO.toString());
 
-            GeoUserDTOOnRegiseterFailureResponse onRegisterDataBindfailure = new GeoUserDTOOnRegiseterFailureResponse();
+      GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse =
+          new GeoUserDTOOnRegiseterFailureResponse();
 
-            onRegisterDataBindfailure.setHasDataBindingfieldError(true);
+      resp.setStatus(400);
+      geoUserDTOOnRegiseterFailureResponse.setMessage("Password and confirm password mismatch");
 
-            resp.setStatus(406);
-            onRegisterDataBindfailure.setMessage("Data binding error");
+      return geoUserDTOOnRegiseterFailureResponse;
+    } catch (GeoUserExistsException e) {
+      logger.info("User already exits %s", newGeoUserDTO.toString());
 
-            return onRegisterDataBindfailure;
-        } catch (GeoUserConfirmPasswordMismatchException e) {
-            logger.info("Password and Confirm Password mismatch occured while registering", newGeoUserDTO.toString());
+      GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse =
+          new GeoUserDTOOnRegiseterFailureResponse();
 
-            GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
+      resp.setStatus(409);
+      geoUserDTOOnRegiseterFailureResponse.setMessage("User already exits!");
 
-            resp.setStatus(400);
-            geoUserDTOOnRegiseterFailureResponse.setMessage("Password and confirm password mismatch");
+      return geoUserDTOOnRegiseterFailureResponse;
+    } catch (GeoUserException e) {
+      logger.error("Error while registering geouser", e);
 
-            return geoUserDTOOnRegiseterFailureResponse;
-        } catch (GeoUserExistsException e) {
-            logger.info("User already exits %s", newGeoUserDTO.toString());
+      GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse =
+          new GeoUserDTOOnRegiseterFailureResponse();
 
-            GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
+      resp.setStatus(500);
+      geoUserDTOOnRegiseterFailureResponse.setMessage("OOPS! please try later");
 
-            resp.setStatus(409);
-            geoUserDTOOnRegiseterFailureResponse.setMessage("User already exits!");
-
-            return geoUserDTOOnRegiseterFailureResponse;
-        } catch (GeoUserException e) {
-            logger.error("Error while registering geouser", e);
-
-            GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse = new GeoUserDTOOnRegiseterFailureResponse();
-
-            resp.setStatus(500);
-            geoUserDTOOnRegiseterFailureResponse.setMessage("OOPS! please try later");
-
-            return geoUserDTOOnRegiseterFailureResponse;
-        }
+      return geoUserDTOOnRegiseterFailureResponse;
     }
+  }
 
-    @ExceptionHandler(value = HttpMessageNotReadableException.class)
-    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
-    public GeoUserDTOOnRegiseterFailureResponse invalidDataRequest(HttpMessageNotReadableException e) {
-        logger.info("Rejecting userLocationDTO values sent by user. Not valid has binding errors.");
+  @ExceptionHandler(value = HttpMessageNotReadableException.class)
+  @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
+  public GeoUserDTOOnRegiseterFailureResponse invalidDataRequest(
+      HttpMessageNotReadableException e) {
+    logger.info("Rejecting userLocationDTO values sent by user. Not valid has binding errors.");
 
-        GeoUserDTOOnRegiseterFailureResponse onRegisterDataBindfailure = new GeoUserDTOOnRegiseterFailureResponse();
+    GeoUserDTOOnRegiseterFailureResponse onRegisterDataBindfailure =
+        new GeoUserDTOOnRegiseterFailureResponse();
 
-        onRegisterDataBindfailure.setHasDataBindingfieldError(true);
+    onRegisterDataBindfailure.setHasDataBindingfieldError(true);
 
-        onRegisterDataBindfailure.setMessage("Data binding error");
+    onRegisterDataBindfailure.setMessage("Data binding error");
 
-        return onRegisterDataBindfailure;
-    }
+    return onRegisterDataBindfailure;
+  }
 }

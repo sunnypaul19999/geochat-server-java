@@ -1,7 +1,7 @@
 package helios.server.geochat.controller;
 
 import helios.server.geochat.dto.response.subTopicResponse.*;
-import helios.server.geochat.exceptions.dtoException.InvalidDTOFieldValueException;
+import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 import helios.server.geochat.service.SubTopicService;
@@ -95,26 +95,21 @@ public class GeoSubTopicController {
 
   @PostMapping(path = "/add")
   public SubTopicDTOResponse addTopic(
+      HttpServletResponse response,
       @Valid @RequestBody SubTopicDTO subTopicDTO,
-      BindingResult bindingResult,
-      HttpServletResponse response) {
+      BindingResult bindingResult)
+      throws InvalidRequestFormatException {
 
     try {
 
       if (bindingResult.hasErrors()) {
 
-        throw new InvalidDTOFieldValueException();
+        throw new InvalidRequestFormatException();
       }
 
       SubTopicDTO persistedSubTopicDTO = subTopicService.addSubTopic(subTopicDTO);
 
       return new SubTopicDTOOnAddSuccessResponse(persistedSubTopicDTO.getSubTopicId());
-
-    } catch (InvalidDTOFieldValueException e) {
-
-      response.setStatus(406);
-
-      return new SubTopicDTOOnAddFailureResponse(e.getMessage());
 
     } catch (TopicNotFoundException e) {
 
@@ -137,13 +132,14 @@ public class GeoSubTopicController {
       @PathVariable("subTopicId") int subTopicId,
       @Valid @RequestBody SubTopicDTO subTopicDTO,
       BindingResult bindingResult,
-      HttpServletResponse response) {
+      HttpServletResponse response)
+      throws InvalidRequestFormatException {
 
     try {
 
       if (bindingResult.hasErrors()) {
 
-        throw new InvalidDTOFieldValueException();
+        throw new InvalidRequestFormatException();
       }
 
       // setting the subTopicId received from path variable
@@ -152,12 +148,6 @@ public class GeoSubTopicController {
       subTopicService.updateSubTopic(subTopicDTO);
 
       return new SubTopicDTOOnUpdateSuccessResponse();
-
-    } catch (InvalidDTOFieldValueException e) {
-
-      response.setStatus(406);
-
-      return new SubTopicDTOOnUpdateFailureResponse(e.getMessage());
 
     } catch (SubTopicNotFoundException e) {
 
