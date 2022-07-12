@@ -1,19 +1,25 @@
 package helios.server.geochat.service;
 
-import helios.server.geochat.dto.request.SubTopicMetaDiscussDTO;
+import helios.server.geochat.dto.request.SubTopicMetaDiscussionDTO;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionException;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
 import helios.server.geochat.model.SubTopicMetaDiscussion;
 
+import java.util.List;
+
 public interface SubTopicMetaDiscussionService {
 
-    SubTopicMetaDiscussion getMessageById(int messageId)
-            throws SubTopicMetaDiscussionNotFoundException, SubTopicMetaDiscussionException;
+  List<SubTopicMetaDiscussionDTO> getAllMessages(int subtopicId) throws SubTopicNotFoundException;
 
-    void addMessage(SubTopicMetaDiscussDTO subTopicMetaDiscussDTO)
-            throws SubTopicNotFoundException, SubTopicMetaDiscussionException, GeoUserNotFoundException;
+  List<SubTopicMetaDiscussionDTO> getPagedMessages(int subtopicId) throws SubTopicNotFoundException;
 
-    void deleteMessage(int messageId) throws SubTopicMetaDiscussionException;
+  SubTopicMetaDiscussion getMessageById(int messageId)
+      throws SubTopicMetaDiscussionNotFoundException, SubTopicMetaDiscussionException;
+
+  int addMessage(SubTopicMetaDiscussionDTO subTopicMetaDiscussDTO)
+      throws SubTopicNotFoundException, SubTopicMetaDiscussionException, GeoUserNotFoundException;
+
+  void deleteMessage(int messageId) throws SubTopicMetaDiscussionException;
 }

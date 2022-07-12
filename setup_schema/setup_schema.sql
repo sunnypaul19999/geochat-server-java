@@ -12,6 +12,8 @@ select * from topic;
 
 select * from subtopic;
 
+select * from subtopicmetadiscuss;
+
 /*6FJ42222+22*/
 
 insert into topic values(1,"this my topic", "6FJ42222+22");

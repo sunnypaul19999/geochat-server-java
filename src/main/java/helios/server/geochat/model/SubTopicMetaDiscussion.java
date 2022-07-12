@@ -3,7 +3,7 @@ package helios.server.geochat.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "subtopic")
+@Table(name = "subtopicmetadiscuss")
 public class SubTopicMetaDiscussion {
 
     @Id
