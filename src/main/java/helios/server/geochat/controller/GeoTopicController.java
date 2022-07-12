@@ -168,6 +168,12 @@ public class GeoTopicController {
 
       return new TopicDTOOnFetchTopicSuccess(List.of(topicDTO));
 
+    }catch (TopicNotFoundException e){
+
+      response.setStatus(404);
+
+      return new TopicDTOOnUpdateFailureResponse("Topic not found!");
+
     } catch (TopicException e) {
 
       response.setStatus(500);

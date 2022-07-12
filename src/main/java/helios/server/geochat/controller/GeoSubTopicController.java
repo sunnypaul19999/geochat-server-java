@@ -177,6 +177,12 @@ public class GeoSubTopicController {
 
       return new SubTopicDTOOnFetchSuccessRespnse(List.of(SubTopicDTO));
 
+    } catch (SubTopicNotFoundException e) {
+
+      response.setStatus(404);
+
+      return new SubTopicDTOOnUpdateFailureResponse("SubTopic not found!");
+
     } catch (SubTopicException e) {
 
       logger.error(e.getMessage(), e);
