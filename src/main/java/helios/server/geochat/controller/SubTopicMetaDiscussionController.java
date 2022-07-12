@@ -117,7 +117,7 @@ public class SubTopicMetaDiscussionController {
 
       response.setStatus(404);
 
-      return new SubTopicMetaDiscussionDTOOnAddFailureResponse("Subtopic does not exists!");
+      return new SubTopicMetaDiscussionDTOOnAddFailureResponse("Message does not exists!");
 
     } catch (SubTopicMetaDiscussionException e) {
 
