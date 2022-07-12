@@ -1,10 +1,10 @@
 package helios.server.geochat.service.impl;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
 import helios.server.geochat.dto.request.SubTopicDTO;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionPageNumberNotInRangeException;
 import helios.server.geochat.service.SubTopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +16,15 @@ import helios.server.geochat.repository.SubTopicMetaDiscussionRepository;
 import helios.server.geochat.dto.request.GeoUserDTO;
 import helios.server.geochat.dto.request.SubTopicMetaDiscussionDTO;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
-import helios.server.geochat.exceptions.serviceExceptions.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionException;
-import helios.server.geochat.exceptions.serviceExceptions.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionNotFoundException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
 import helios.server.geochat.model.GeoUser;
 import helios.server.geochat.model.SubTopic;
 import helios.server.geochat.model.SubTopicMetaDiscussion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,7 +37,6 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
   @Autowired GeoSecurityUserServiceImpl geoUserServiceImpl;
 
   @Autowired SubTopicMetaDiscussionRepository subTopicMetaDiscussionRepository;
-  private SubTopicNotFoundException e;
 
   @Override
   public SubTopicMetaDiscussion getMessageById(int messageId)
@@ -65,34 +65,39 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
     subTopicService.getSubTopicById(subTopicId);
 
     List<SubTopicMetaDiscussion> subTopicMeta =
-        subTopicMetaDiscussionRepository.findBySubTopicId(subTopicId);
+        subTopicMetaDiscussionRepository.findBySubTopicId(
+            subTopicId, Sort.by(Sort.Order.asc("id")));
 
     return subTopicMeta.stream()
         .map(
             meta ->
                 new SubTopicMetaDiscussionDTO(
-                    meta.getGeoUser().getUsername(), subTopicId, meta.getMessage()))
+                    meta.getId(), meta.getGeoUser().getUsername(), subTopicId, meta.getMessage()))
         .toList();
   }
 
   @Override
-  public List<SubTopicMetaDiscussionDTO> getPagedMessages(int subTopicId)
-      throws SubTopicNotFoundException {
+  public List<SubTopicMetaDiscussionDTO> getPagedMessages(int subTopicId, int pageNumber)
+      throws SubTopicNotFoundException, SubTopicMetaDiscussionPageNumberNotInRangeException {
 
-    /*SubTopicDTO subTopicDTO = subTopicService.getSubTopicById(subTopicId);
+    if (pageNumber <= 0) {
+      throw new SubTopicMetaDiscussionPageNumberNotInRangeException();
+    }
+
+    SubTopicDTO subTopicDTO = subTopicService.getSubTopicById(subTopicId);
 
     Page<SubTopicMetaDiscussion> subTopicMetaDiscussionPaged =
         subTopicMetaDiscussionRepository.findBySubTopicId(
-            subTopicDTO.getSubTopicId(), (Pageable) PageRequest.of(0, 5));
+            subTopicDTO.getSubTopicId(),
+            PageRequest.of(pageNumber - 1, 5, Sort.by(Sort.Order.asc("id"))));
 
     return subTopicMetaDiscussionPaged
         .map(
             meta ->
                 new SubTopicMetaDiscussionDTO(
-                    meta.getGeoUser().getUsername(), subTopicId, meta.getMessage()))
+                    meta.getId(), meta.getGeoUser().getUsername(), subTopicId, meta.getMessage()))
         .stream()
-        .toList();*/
-    return null;
+        .toList();
   }
 
   @Override

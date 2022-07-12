@@ -4,7 +4,9 @@ import helios.server.geochat.dto.request.SubTopicMetaDiscussionDTO;
 import helios.server.geochat.dto.response.geoSubTopicMetaDiscussion.*;
 import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
-import helios.server.geochat.exceptions.serviceExceptions.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionNotFoundException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionPageNumberNotInRangeException;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
 import helios.server.geochat.service.SubTopicMetaDiscussionService;
 
@@ -20,6 +22,31 @@ import javax.validation.Valid;
 public class SubTopicMetaDiscussionController {
 
   @Autowired SubTopicMetaDiscussionService subTopicMetaDiscussionService;
+
+  @GetMapping(path = "/subTopic/{subTopicId}/page/{pageNumber}")
+  public SubTopicMetaDiscussionDTOResponse getAll(
+      @PathVariable("subTopicId") int subTopicId,
+      @PathVariable("pageNumber") int pageNumber,
+      HttpServletResponse response) {
+
+    try {
+
+      return new SubTopicMetaDiscussionDTOOnFetchSuccessResponse(
+          subTopicMetaDiscussionService.getPagedMessages(subTopicId, pageNumber));
+
+    } catch (SubTopicMetaDiscussionPageNumberNotInRangeException e) {
+
+      response.setStatus(404);
+
+      return new SubTopicMetaDiscussionDTOOnFetchFailureResponse("Page number not in range");
+
+    } catch (SubTopicNotFoundException e) {
+
+      response.setStatus(404);
+
+      return new SubTopicMetaDiscussionDTOOnFetchFailureResponse("SubTopic not found!");
+    }
+  }
 
   @GetMapping(path = "/subTopic/{subTopicId}/all")
   public SubTopicMetaDiscussionDTOResponse getAll(
@@ -67,6 +94,30 @@ public class SubTopicMetaDiscussionController {
       response.setStatus(404);
 
       return new SubTopicMetaDiscussionDTOOnAddFailureResponse("User not found!");
+
+    } catch (SubTopicMetaDiscussionException e) {
+
+      response.setStatus(500);
+
+      return new SubTopicMetaDiscussionDTOOnAddFailureResponse();
+    }
+  }
+
+  @DeleteMapping(path = "/message/{metaDiscussId}/delete")
+  public SubTopicMetaDiscussionDTOResponse deleteSubtopic(
+      @PathVariable("metaDiscussId") int metaDiscussId, HttpServletResponse response) {
+
+    try {
+
+      subTopicMetaDiscussionService.deleteMessage(metaDiscussId);
+
+      return new SubTopicMetaDiscussionDTOOnAddSuccessResponse(metaDiscussId);
+
+    } catch (SubTopicMetaDiscussionNotFoundException e) {
+
+      response.setStatus(404);
+
+      return new SubTopicMetaDiscussionDTOOnAddFailureResponse("Subtopic does not exists!");
 
     } catch (SubTopicMetaDiscussionException e) {
 

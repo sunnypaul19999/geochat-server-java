@@ -1,4 +1,4 @@
-package helios.server.geochat.exceptions.serviceExceptions.subTopicMetaDiscussionServiceException;
+package helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException;
 
 public class SubTopicMetaDiscussionException extends Exception {
 
