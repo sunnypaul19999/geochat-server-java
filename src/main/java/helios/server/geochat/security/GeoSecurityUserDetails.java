@@ -12,50 +12,49 @@ import helios.server.geochat.model.GeoUser;
 
 public class GeoSecurityUserDetails implements UserDetails {
 
-    @NotNull
-    private final transient GeoUser geoUser;
+  @NotNull private final transient GeoUser geoUser;
 
-    public GeoSecurityUserDetails(GeoUser geoUser) {
-        this.geoUser = geoUser;
-    }
+  public GeoSecurityUserDetails(GeoUser geoUser) {
+    this.geoUser = geoUser;
+  }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        return List.of(new GeoSecurityUserGrantedAuthoriy("USER"));
-    }
+    return geoUser.getRole();
+  }
 
-    @Override
-    public String getPassword() {
-        return geoUser.getPassword();
-    }
+  @Override
+  public String getPassword() {
+    return geoUser.getPassword();
+  }
 
-    @Override
-    public String getUsername() {
-        return geoUser.getUsername();
-    }
+  @Override
+  public String getUsername() {
+    return geoUser.getUsername();
+  }
 
-    @Override
-    public boolean isAccountNonExpired() {
+  @Override
+  public boolean isAccountNonExpired() {
 
-        return false;
-    }
+    return true;
+  }
 
-    @Override
-    public boolean isAccountNonLocked() {
+  @Override
+  public boolean isAccountNonLocked() {
 
-        return false;
-    }
+    return true;
+  }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
+  @Override
+  public boolean isCredentialsNonExpired() {
 
-        return false;
-    }
+    return true;
+  }
 
-    @Override
-    public boolean isEnabled() {
+  @Override
+  public boolean isEnabled() {
 
-        return true;
-    }
+    return true;
+  }
 }

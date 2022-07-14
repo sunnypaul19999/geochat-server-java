@@ -7,15 +7,13 @@ import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatExcepti
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.SecurityContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import helios.server.geochat.dto.request.NewGeoUserDTO;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterFailureResponse;
@@ -86,6 +84,16 @@ public class GeoUserController {
 
       return geoUserDTOOnRegiseterFailureResponse;
     }
+  }
+
+  @GetMapping(value = "/login")
+  public void geoChatLogin() {}
+
+  @GetMapping(value = "/logout")
+  public void geoChatLogout() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    authentication.setAuthenticated(false);
   }
 
   @ExceptionHandler(value = HttpMessageNotReadableException.class)

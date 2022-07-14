@@ -35,11 +35,12 @@ public class GeoPointController {
       @Valid @RequestBody UserLocationDTO userLocationDTO,
       BindingResult bindingResult,
       HttpSession session,
-      HttpServletResponse httpServletResponse
-      )
+      HttpServletResponse httpServletResponse)
       throws InvalidRequestFormatException {
     try {
+
       if (bindingResult.hasErrors()) {
+
         throw new InvalidRequestFormatException();
       }
 

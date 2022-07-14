@@ -65,8 +65,11 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
       return new GeoSecurityUserDetails(geoUser);
 
     } catch (GeoUserNotFoundException e) {
-      LoggerFactory.getLogger(getClass()).trace("GeoUserNotFoundException");
-      throw new UsernameNotFoundException(e.getMessage());
+
+      LoggerFactory.getLogger(getClass())
+          .trace(String.format("GeoUserNotFoundException %s", username));
+
+      throw new UsernameNotFoundException("You are not user of geochat I cant let you in!!!!!");
     }
   }
 

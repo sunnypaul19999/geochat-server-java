@@ -1,13 +1,14 @@
 package helios.server.geochat.model;
 
 import org.hibernate.annotations.GeneratorType;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "geouser_assumable_role")
-public class GeoUserAssumableRole {
+public class GeoUserAssumableRole implements GrantedAuthority {
 
   @Id
   @Column(name = "role_id", nullable = false)
@@ -44,5 +45,10 @@ public class GeoUserAssumableRole {
 
   public void setGeoUserRoles(List<GeoUserRole> geoUserRoles) {
     this.geoUserRoles = geoUserRoles;
+  }
+
+  @Override
+  public String getAuthority() {
+    return getRoleType();
   }
 }

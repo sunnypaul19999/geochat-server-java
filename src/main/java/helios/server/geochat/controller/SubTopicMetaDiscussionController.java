@@ -103,7 +103,7 @@ public class SubTopicMetaDiscussionController {
     }
   }
 
-  @DeleteMapping(path = "/message/{metaDiscussId}/delete")
+  @DeleteMapping(path = "/message/delete/{metaDiscussId}")
   public SubTopicMetaDiscussionDTOResponse deleteSubtopic(
       @PathVariable("metaDiscussId") int metaDiscussId, HttpServletResponse response) {
 
