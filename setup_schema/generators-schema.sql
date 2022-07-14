@@ -1,18 +1,19 @@
-create table geouser_id_seqgenerator(
+create table if not exists geouser_id_seq_generator(
 next_val bigint
 )engine = MyISAM;
 
-create table sub_topic_id_seqgenerator(
+create table if not exists sub_topic_id_seq_generator(
 next_val bigint
 )engine = MyISAM;
 
-create table sub_topic_meta_discuss_id_seqgenerator(
+create table if not exists sub_topic_meta_discuss_id_seq_generator(
 next_val bigint
 )engine = MyISAM;
 
 /*inserting the starting value for sequence generators*/
-insert into geouser_id_seqgenerator (next_val) values(1);
+insert into geouser_id_seq_generator (next_val) values(1);
+insert into sub_topic_id_seq_generator (next_val) values(1);
+insert into sub_topic_meta_discuss_id_seq_generator (next_val) values(1);
 
-insert into sub_topic_id_seqgenerator (next_val) values(1);
-
-insert into sub_topic_meta_discuss_id_seqgenerator (next_val) values(1);
+insert into geouser_assumable_role values (1, "USER"), (2, "ADMIN");
+insert into geopointrange (id,radius) values(1,500);

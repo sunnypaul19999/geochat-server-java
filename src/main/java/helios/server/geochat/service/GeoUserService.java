@@ -15,5 +15,7 @@ public interface GeoUserService {
 
     void addUser(NewGeoUserDTO newGeoUserDTO) throws GeoUserException;
 
+    void addUserAsAdmin(NewGeoUserDTO newGeoUserDTO) throws GeoUserException;
+
     void deleteUser(GeoUserDTO geoUserDTO) throws GeoUserException;
 }

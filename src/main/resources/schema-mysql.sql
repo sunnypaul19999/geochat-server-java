@@ -81,3 +81,20 @@ constraint sender_id_fk foreign key(sender_id) references geouser(user_id)
 create unique index un_index_geouser_username
 using btree
 on geouserrole(user_id, role_id);
+
+create table if not exists geouser_id_seq_generator(
+next_val bigint
+)engine = MyISAM;
+
+create table if not exists sub_topic_id_seq_generator(
+next_val bigint
+)engine = MyISAM;
+
+create table if not exists sub_topic_meta_discuss_id_seq_generator(
+next_val bigint
+)engine = MyISAM;
+
+
+
+
+

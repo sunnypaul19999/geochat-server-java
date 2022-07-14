@@ -12,8 +12,8 @@ public class Topic {
 
     @Id
     @Column(name = "topic_id", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "topic_id_seqgenerator")
-    @SequenceGenerator(name = "topic_id_seqgenerator", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "topic_id_seq_generator")
+    @SequenceGenerator(name = "topic_id_seq_generator", allocationSize = 1)
     private int topicId;
 
     @Column(name = "topic_title", length = 4000)

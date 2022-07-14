@@ -1,11 +1,14 @@
 package helios.server.geochat.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.validation.BindingResult;
@@ -29,9 +32,11 @@ public class GeoPointController {
 
   @PostMapping(value = "/register")
   public GeoPointDTOResponse registerGeoPoint(
-      HttpServletResponse resp,
       @Valid @RequestBody UserLocationDTO userLocationDTO,
-      BindingResult bindingResult)
+      BindingResult bindingResult,
+      HttpSession session,
+      HttpServletResponse httpServletResponse
+      )
       throws InvalidRequestFormatException {
     try {
       if (bindingResult.hasErrors()) {
@@ -40,21 +45,31 @@ public class GeoPointController {
 
       String plusCode = geoPointService.registerGeoPoint(userLocationDTO);
 
-      resp.setStatus(200);
+      session.setAttribute("geoPointPlusCode", "plusCode");
+
+      httpServletResponse.setStatus(200);
 
       return new GeoPointDTOOnRegisterSuccessResponse(plusCode);
 
     } catch (GeoPointException e) {
+
       logger.error("Error while saving geopoint", e);
 
-      resp.setStatus(500);
+      httpServletResponse.setStatus(500);
     }
 
     return new GeoPointDTOOnRegisterFailureResponse();
   }
 
-  @GetMapping(value = "/description")
-  public String description() {
-    return this.getClass().getName();
+  @GetMapping(value = "/plusCode")
+  public String getPlusCode(HttpSession session) {
+
+    return session.getAttribute("geoPointPlusCode").toString();
+  }
+
+  @GetMapping(path = "/setPlusCode")
+  public String setPlusCode(HttpSession session) {
+    session.setAttribute("geoPointPlusCode", "plusCode");
+    return session.getAttribute("geoPointPlusCode").toString();
   }
 }

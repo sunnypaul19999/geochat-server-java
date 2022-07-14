@@ -12,8 +12,8 @@ public class GeoUser {
 
   @Id
   @Column(name = "user_id")
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "geouser_id_seqgenerator")
-  @SequenceGenerator(name = "geouser_id_seqgenerator", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "geouser_id_seq_generator")
+  @SequenceGenerator(name = "geouser_id_seq_generator", initialValue = 1, allocationSize = 1)
   private int id;
 
   @Column(name = "username", length = 50, nullable = false)
@@ -21,6 +21,20 @@ public class GeoUser {
 
   @Column(name = "password", length = 256, nullable = false)
   private String password;
+
+  //  select geouser_assumable_role.role_id, geouser_assumable_role.role_type
+  //  from geouserrole //joint table
+  //  right outer join geouser_assumable_role
+  //  on geouser_assumable_role.role_id = geouserrole.role_id
+  //  where geouserrole.user_id = 1
+  @ManyToMany(fetch = FetchType.EAGER)
+  // mapping: geouserrole(join table fk) to geouser
+  // and geouserrole(join table fk) to geouser_assumable_role
+  @JoinTable(
+      name = "geouserrole",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private List<GeoUserAssumableRole> role;
 
   @OneToMany(mappedBy = "geoUser", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
   private List<SubTopicMetaDiscussion> subTopicMetaDiscussion;
@@ -54,6 +68,14 @@ public class GeoUser {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public List<GeoUserAssumableRole> getRole() {
+    return role;
+  }
+
+  public void setRole(List<GeoUserAssumableRole> role) {
+    this.role = role;
   }
 
   public List<SubTopicMetaDiscussion> getSubTopicMetaDiscussion() {

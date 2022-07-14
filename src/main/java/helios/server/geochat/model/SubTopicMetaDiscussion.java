@@ -8,8 +8,8 @@ public class SubTopicMetaDiscussion {
 
     @Id
     @Column(name = "meta_discuss_id", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sub_topic_meta_discuss_id_seqgenerator")
-    @SequenceGenerator(name = "sub_topic_meta_discuss_id_seqgenerator", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sub_topic_meta_discuss_id_seq_generator")
+    @SequenceGenerator(name = "sub_topic_meta_discuss_id_seq_generator", allocationSize = 1)
     private int id;
 
     @Column(name = "message", length = 250, updatable = false, nullable = false)
