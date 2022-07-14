@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
@@ -30,6 +31,7 @@ public class GeoTopicController {
 
     try {
 
+      // finds all topics by their plusCode
       TopicDTO topicDTO = topicService.getTopicById(id);
 
       return new TopicDTOOnFetchTopicSuccess(List.of(topicDTO));
@@ -48,11 +50,14 @@ public class GeoTopicController {
 
   @GetMapping(path = "/page/{pageNumber}")
   public TopicDTOResponse getTopicsByPageNumber(
-      @PathVariable("pageNumber") int pageNumber, HttpServletResponse response) {
+      @PathVariable("pageNumber") int pageNumber,
+      @CookieValue(name = "geoPointPlusCode") String geoPointPLusCode,
+      HttpServletResponse response) {
 
     try {
 
-      List<TopicDTO> topicDTOList = topicService.getPagedTopics(pageNumber);
+      // topics by their plusCode
+      List<TopicDTO> topicDTOList = topicService.getPagedTopics(pageNumber, geoPointPLusCode);
 
       return new TopicDTOOnFetchTopicSuccess(topicDTOList);
 
@@ -73,11 +78,13 @@ public class GeoTopicController {
   }
 
   @GetMapping(path = "/all")
-  public TopicDTOResponse getAllTopics(HttpServletResponse response) {
+  public TopicDTOResponse getAllTopics(
+      @CookieValue(name = "geoPointPlusCode") String geoPointPLusCode,
+      HttpServletResponse response) {
 
     try {
 
-      List<TopicDTO> topicDTOList = topicService.getAllTopics();
+      List<TopicDTO> topicDTOList = topicService.getAllTopics(geoPointPLusCode);
 
       return new TopicDTOOnFetchTopicSuccess(topicDTOList);
 
@@ -93,6 +100,7 @@ public class GeoTopicController {
 
   @PostMapping(path = "/add")
   public TopicDTOResponse addTopic(
+      @CookieValue(name = "geoPointPlusCode") String geoPointPLusCode,
       @Valid @RequestBody TopicDTO topicDTO,
       BindingResult bindingResult,
       HttpServletResponse response)
@@ -104,6 +112,8 @@ public class GeoTopicController {
 
         throw new InvalidRequestFormatException();
       }
+
+      topicDTO.setPlusCode(geoPointPLusCode);
 
       TopicDTO persistedTopicDTO = topicService.addTopic(topicDTO);
 
@@ -168,7 +178,7 @@ public class GeoTopicController {
 
       return new TopicDTOOnFetchTopicSuccess(List.of(topicDTO));
 
-    }catch (TopicNotFoundException e){
+    } catch (TopicNotFoundException e) {
 
       response.setStatus(404);
 

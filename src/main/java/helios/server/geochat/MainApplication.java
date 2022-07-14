@@ -92,7 +92,9 @@ public class MainApplication {
   //  @Bean
   //  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
   //
-  //    http.csrf().disable().cors().disable().authorizeRequests().anyRequest().permitAll();
+  //    configureCors(http);
+  //
+  //    http.csrf().disable().authorizeRequests().anyRequest().permitAll();
   //
   //    return http.build();
   //  }

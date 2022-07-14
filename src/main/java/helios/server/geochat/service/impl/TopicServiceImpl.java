@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicPageNumberNotInRangeException;
+import helios.server.geochat.model.GeoPoint;
+import helios.server.geochat.repository.GeoPointRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import helios.server.geochat.model.Topic;
@@ -26,6 +29,8 @@ import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.
 public class TopicServiceImpl implements TopicService {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
+
+  @Autowired GeoPointRepository geoPointRepository;
 
   @Autowired TopicRepository topicRepository;
 
@@ -74,7 +79,8 @@ public class TopicServiceImpl implements TopicService {
   }
 
   @Override
-  public List<TopicDTO> getPagedTopics(int pageNumber) throws TopicException {
+  public List<TopicDTO> getPagedTopics(int pageNumber, String geoPointPLusCode)
+      throws TopicException {
 
     if (pageNumber <= 0) {
 
@@ -83,10 +89,10 @@ public class TopicServiceImpl implements TopicService {
 
     try {
 
-      Pageable pageable = PageRequest.of(pageNumber - 1, 5);
+      Pageable pageable = PageRequest.of(pageNumber - 1, 5, Sort.by(Sort.Order.asc("topicId")));
 
       return topicRepository
-          .findAll(pageable)
+          .findByGeoPointPlusCode(geoPointPLusCode, pageable)
           .map(topic -> new TopicDTO(topic.getTopicId(), topic.getTopicTitle()))
           .stream()
           .toList();
@@ -100,11 +106,13 @@ public class TopicServiceImpl implements TopicService {
   }
 
   @Override
-  public List<TopicDTO> getAllTopics() throws TopicException {
+  public List<TopicDTO> getAllTopics(String geoPointPLusCode) throws TopicException {
 
     try {
 
-      return topicRepository.findAll().stream()
+      return topicRepository
+          .findAllByGeoPointPlusCode(geoPointPLusCode, Sort.by(Sort.Order.asc("topicId")))
+          .stream()
           .map(topic -> new TopicDTO(topic.getTopicId(), topic.getTopicTitle()))
           .toList();
 
@@ -171,17 +179,29 @@ public class TopicServiceImpl implements TopicService {
   @Override
   public TopicDTO addTopic(TopicDTO topicDTO) throws TopicException {
 
-    Topic topic;
+    Topic newTopic;
 
     try {
 
-      topic = new Topic(topicDTO);
+      newTopic = new Topic(topicDTO);
 
-      topic = topicRepository.save(topic);
+      Optional<GeoPoint> geoPoint = geoPointRepository.findById(topicDTO.getPlusCode());
 
-      return new TopicDTO(topic.getTopicId(), topic.getTopicTitle());
+      logger.info(String.format("GeoPoint from database %s", geoPoint.get().getPlusCode()));
+
+      // todo: dangerously setting optional value of geoPoint,
+      //  must throw exception if geoPoint is null i.e, not found
+      newTopic.setGeoPoint(geoPoint.get());
+
+      newTopic = topicRepository.save(newTopic);
+
+      topicDTO.setId(newTopic.getTopicId());
+
+      return topicDTO;
 
     } catch (Exception e) {
+
+      logger.error("Exception raised while add new topic", e);
 
       throw new TopicException("ADD", e.getMessage());
     }

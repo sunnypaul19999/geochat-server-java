@@ -2,6 +2,10 @@ create table if not exists geouser_id_seq_generator(
 next_val bigint
 )engine = MyISAM;
 
+create table if not exists topic_id_seq_generator(
+next_val bigint
+)engine = MyISAM;
+
 create table if not exists sub_topic_id_seq_generator(
 next_val bigint
 )engine = MyISAM;
@@ -12,6 +16,7 @@ next_val bigint
 
 /*inserting the starting value for sequence generators*/
 insert into geouser_id_seq_generator (next_val) values(1);
+insert into topic_id_seq_generator (next_val) values(1);
 insert into sub_topic_id_seq_generator (next_val) values(1);
 insert into sub_topic_meta_discuss_id_seq_generator (next_val) values(1);
 

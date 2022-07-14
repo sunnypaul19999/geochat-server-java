@@ -12,9 +12,9 @@ public interface TopicService {
 
   TopicDTO getTopicById(int id) throws TopicException;
 
-  List<TopicDTO> getPagedTopics(int pageNumber) throws TopicException;
+  List<TopicDTO> getPagedTopics(int pageNumber, String geoPointPLusCode) throws TopicException;
 
-  List<TopicDTO> getAllTopics() throws TopicException;
+  List<TopicDTO> getAllTopics(String geoPointPLusCode) throws TopicException;
 
   void updateTopic(TopicDTO topicDTO) throws TopicException;
 

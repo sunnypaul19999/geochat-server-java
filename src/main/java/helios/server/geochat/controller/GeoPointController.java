@@ -1,5 +1,6 @@
 package helios.server.geochat.controller;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,6 +22,8 @@ import helios.server.geochat.dto.response.geoPointResponse.GeoPointDTOOnRegister
 import helios.server.geochat.dto.response.geoPointResponse.GeoPointDTOResponse;
 import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
 import helios.server.geochat.service.GeoPointService;
+
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/geopoint")
@@ -50,6 +53,13 @@ public class GeoPointController {
 
       httpServletResponse.setStatus(200);
 
+      Cookie cookie = new Cookie("geoPointPlusCode", plusCode);
+
+      cookie.setHttpOnly(false);
+      cookie.setPath("/");
+      cookie.setHttpOnly(false);
+      httpServletResponse.addCookie(cookie);
+
       return new GeoPointDTOOnRegisterSuccessResponse(plusCode);
 
     } catch (GeoPointException e) {
@@ -62,10 +72,20 @@ public class GeoPointController {
     return new GeoPointDTOOnRegisterFailureResponse();
   }
 
-  @GetMapping(value = "/plusCode")
-  public String getPlusCode(HttpSession session) {
+  @PostMapping(value = "/plusCode")
+  public String getPlusCode(@CookieValue(name = "geoPointPlusCode") String geoPointPlusCode) {
+    // @CookieValue(value = "geoPointPlusCode") String plusCode
+    // Cookie[] cookies = request.getCookies();
 
-    return session.getAttribute("geoPointPlusCode").toString();
+    //    ArrayList<Cookie> cookieList = new ArrayList<>();
+    //
+    //    Collections.addAll(cookieList, cookies);
+    //
+    //    logger.error(String.format("Cookies in request is %s ", cookies.length));
+
+    // return String.format("Cookies in request is %s ", (cookies == null) ? "null" :
+    // cookies[1].getValue());
+    return geoPointPlusCode;
   }
 
   @GetMapping(path = "/setPlusCode")

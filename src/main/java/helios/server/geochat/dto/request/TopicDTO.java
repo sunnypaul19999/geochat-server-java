@@ -3,6 +3,7 @@ package helios.server.geochat.dto.request;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
@@ -16,6 +17,8 @@ public class TopicDTO {
   @NotNull
   @Length(min = 2, max = 250)
   private String topicTitle;
+
+  @JsonIgnore private String plusCode;
 
   public TopicDTO(@NotNull @Length(min = 80, max = 250) String title) {
     this.topicTitle = title;
@@ -40,6 +43,14 @@ public class TopicDTO {
 
   public void setTopicTitle(String topicTitle) {
     this.topicTitle = topicTitle;
+  }
+
+  public String getPlusCode() {
+    return plusCode;
+  }
+
+  public void setPlusCode(String plusCode) {
+    this.plusCode = plusCode;
   }
 
   @Override
