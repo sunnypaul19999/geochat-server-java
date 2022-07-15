@@ -31,7 +31,7 @@ public class GeoPointServiceImpl implements GeoPointService {
     Optional<GeoPoint> geoPoint = geoPointRepository.findById(plusCode);
 
     if (geoPoint.isPresent()) {
-      plusCode = geoPoint.get().getPlusCode();
+      return geoPoint.get();
     }
 
     throw new GeoPointNotRegisteredException(plusCode);
