@@ -6,6 +6,7 @@ import java.util.Optional;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicPageNumberNotInRangeException;
 
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 import helios.server.geochat.model.Topic;
 import helios.server.geochat.service.TopicService;
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class SubTopicServiceImpl implements SubTopicService {
 
   @Override
   public List<SubTopicDTO> getPagedSubTopics(int topicId, int subTopicPageNumber)
-      throws SubTopicException {
+      throws SubTopicException, TopicNotFoundException {
 
     if (subTopicPageNumber <= 0) {
 
@@ -73,7 +74,7 @@ public class SubTopicServiceImpl implements SubTopicService {
     }
 
     try {
-      // todo: check if topic exits
+      topicService.getTopicEntityById(topicId);
 
       PageRequest pageable =
           PageRequest.of(subTopicPageNumber - 1, 5, Sort.by(Sort.Order.asc("id")));
@@ -86,6 +87,10 @@ public class SubTopicServiceImpl implements SubTopicService {
           .stream()
           .toList();
 
+    } catch (TopicNotFoundException e) {
+
+      throw e;
+
     } catch (Exception e) {
 
       throw new SubTopicException("GET_SUB_TOPICS_PAGED", e.getMessage());
@@ -93,10 +98,11 @@ public class SubTopicServiceImpl implements SubTopicService {
   }
 
   @Override
-  public List<SubTopicDTO> getAllSubTopics(int topicId) throws SubTopicException {
+  public List<SubTopicDTO> getAllSubTopics(int topicId)
+      throws SubTopicException, TopicNotFoundException {
     try {
 
-      // todo: check if topic exits
+      topicService.getTopicEntityById(topicId);
 
       return subTopicRepository
           .findAllByTopicTopicId(topicId, Sort.by(Sort.Order.asc("id")))
@@ -105,6 +111,10 @@ public class SubTopicServiceImpl implements SubTopicService {
               subTopic ->
                   new SubTopicDTO(subTopic.getId(), subTopic.getTitle(), subTopic.getDescription()))
           .toList();
+
+    } catch (TopicNotFoundException e) {
+
+      throw e;
 
     } catch (Exception e) {
 

@@ -40,6 +40,12 @@ public class GeoSubTopicController {
 
       return new SubTopicDTOOnFetchSuccessRespnse(SubTopicDTOList);
 
+    } catch (TopicNotFoundException e) {
+
+      response.setStatus(404);
+
+      return new SubTopicDTOOnAddFailureResponse("Topic not found");
+
     } catch (SubTopicException e) {
 
       logger.error(e.getMessage(), e);
@@ -82,6 +88,12 @@ public class GeoSubTopicController {
           subTopicService.getPagedSubTopics(topicId, subTopicPageNumber);
 
       return new SubTopicDTOOnFetchSuccessRespnse(subTopicDTOList);
+
+    } catch (TopicNotFoundException e) {
+
+      response.setStatus(404);
+
+      return new SubTopicDTOOnAddFailureResponse("Topic not found");
 
     } catch (SubTopicPageNumberNotInRangeException e) {
 
