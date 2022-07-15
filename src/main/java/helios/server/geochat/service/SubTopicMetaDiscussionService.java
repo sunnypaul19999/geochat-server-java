@@ -6,6 +6,7 @@ import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceExceptio
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionPageNumberNotInRangeException;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.model.SubTopicMetaDiscussion;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public interface SubTopicMetaDiscussionService {
       throws SubTopicMetaDiscussionNotFoundException, SubTopicMetaDiscussionException;
 
   int addMessage(SubTopicMetaDiscussionDTO subTopicMetaDiscussDTO)
-      throws SubTopicNotFoundException, SubTopicMetaDiscussionException, GeoUserNotFoundException;
+      throws SubTopicNotFoundException, SubTopicMetaDiscussionException, GeoUserNotFoundException, TopicException;
 
   void deleteMessage(int topicId, int subtopicId, int messageId) throws SubTopicMetaDiscussionException;
 }

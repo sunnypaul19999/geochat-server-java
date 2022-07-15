@@ -8,9 +8,12 @@ import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceExceptio
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionPageNumberNotInRangeException;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 import helios.server.geochat.service.SubTopicMetaDiscussionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,6 +87,10 @@ public class SubTopicMetaDiscussionController {
         throw new InvalidRequestFormatException();
       }
 
+      String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+      subTopicMetaDiscussionDTO.setSenderUsername(username);
+
       subTopicMetaDiscussionDTO.setTopicId(topicId);
 
       subTopicMetaDiscussionDTO.setSubTopicId(subTopicId);
@@ -91,6 +98,12 @@ public class SubTopicMetaDiscussionController {
       int messageId = subTopicMetaDiscussionService.addMessage(subTopicMetaDiscussionDTO);
 
       return new SubTopicMetaDiscussionDTOOnAddSuccessResponse(messageId);
+
+    } catch (TopicNotFoundException e) {
+
+      response.setStatus(404);
+
+      return new SubTopicMetaDiscussionDTOOnAddFailureResponse("Topic not found!");
 
     } catch (SubTopicNotFoundException e) {
 
@@ -104,7 +117,7 @@ public class SubTopicMetaDiscussionController {
 
       return new SubTopicMetaDiscussionDTOOnAddFailureResponse("User not found!");
 
-    } catch (SubTopicMetaDiscussionException e) {
+    } catch (SubTopicMetaDiscussionException | TopicException e) {
 
       response.setStatus(500);
 

@@ -19,8 +19,7 @@ public class SubTopicMetaDiscussionDTO {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private int messageId;
 
-  @NotNull
-  @JsonProperty(access = JsonProperty.Access.READ_WRITE)
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private String senderUsername;
 
   @NotNull
@@ -29,10 +28,11 @@ public class SubTopicMetaDiscussionDTO {
   private String message;
 
   public SubTopicMetaDiscussionDTO(
-      int messageId, String senderUsername, int subTopicId, String message) {
+      int topicId, int subTopicId, int messageId, String senderUsername, String message) {
+    this.topicId = topicId;
+    this.subTopicId = subTopicId;
     this.messageId = messageId;
     this.senderUsername = senderUsername;
-    this.subTopicId = subTopicId;
     this.message = message;
   }
 

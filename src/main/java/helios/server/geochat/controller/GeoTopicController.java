@@ -3,6 +3,7 @@ package helios.server.geochat.controller;
 import helios.server.geochat.dto.request.TopicDTO;
 import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
 import helios.server.geochat.dto.response.topicResponse.*;
+import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointNotRegisteredException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicPageNumberNotInRangeException;
@@ -118,6 +119,12 @@ public class GeoTopicController {
       TopicDTO persistedTopicDTO = topicService.addTopic(topicDTO);
 
       return new TopicDTOOnAddSuccessResponse(persistedTopicDTO.getId());
+
+    } catch (GeoPointNotRegisteredException e) {
+
+      response.setStatus(410);
+
+      return new TopicDTOOnFetchTopicFailure("GeoPoint is not registered!");
 
     } catch (TopicException e) {
 

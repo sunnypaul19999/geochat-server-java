@@ -3,9 +3,11 @@ package helios.server.geochat.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointNotRegisteredException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicPageNumberNotInRangeException;
 import helios.server.geochat.model.GeoPoint;
 import helios.server.geochat.repository.GeoPointRepository;
+import helios.server.geochat.service.GeoPointService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,7 @@ public class TopicServiceImpl implements TopicService {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
-  @Autowired GeoPointRepository geoPointRepository;
+  @Autowired GeoPointService geoPointService;
 
   @Autowired TopicRepository topicRepository;
 
@@ -50,6 +52,7 @@ public class TopicServiceImpl implements TopicService {
     } catch (TopicNotFoundException e) {
 
       throw e;
+
     } catch (Exception e) {
 
       logger.error(e.getMessage(), e);
@@ -177,7 +180,8 @@ public class TopicServiceImpl implements TopicService {
   }
 
   @Override
-  public TopicDTO addTopic(TopicDTO topicDTO) throws TopicException {
+  public TopicDTO addTopic(TopicDTO topicDTO)
+      throws TopicException, GeoPointNotRegisteredException {
 
     Topic newTopic;
 
@@ -185,19 +189,19 @@ public class TopicServiceImpl implements TopicService {
 
       newTopic = new Topic(topicDTO);
 
-      Optional<GeoPoint> geoPoint = geoPointRepository.findById(topicDTO.getPlusCode());
+      GeoPoint geoPoint = geoPointService.isGeoPointRegistered(topicDTO.getPlusCode());
 
-      logger.info(String.format("GeoPoint from database %s", geoPoint.get().getPlusCode()));
-
-      // todo: dangerously setting optional value of geoPoint,
-      //  must throw exception if geoPoint is null i.e, not found
-      newTopic.setGeoPoint(geoPoint.get());
+      newTopic.setGeoPoint(geoPoint);
 
       newTopic = topicRepository.save(newTopic);
 
       topicDTO.setId(newTopic.getTopicId());
 
       return topicDTO;
+
+    } catch (GeoPointNotRegisteredException e) {
+
+      throw e;
 
     } catch (Exception e) {
 

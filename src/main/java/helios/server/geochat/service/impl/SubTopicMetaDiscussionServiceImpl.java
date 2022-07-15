@@ -5,7 +5,11 @@ import java.util.Optional;
 
 import helios.server.geochat.dto.request.SubTopicDTO;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionPageNumberNotInRangeException;
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
+import helios.server.geochat.model.Topic;
 import helios.server.geochat.service.SubTopicService;
+import helios.server.geochat.service.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +35,8 @@ import org.springframework.stereotype.Service;
 public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussionService {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
+
+  @Autowired TopicService topicService;
 
   @Autowired SubTopicService subTopicService;
 
@@ -72,7 +78,11 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
         .map(
             meta ->
                 new SubTopicMetaDiscussionDTO(
-                    meta.getId(), meta.getGeoUser().getUsername(), subTopicId, meta.getMessage()))
+                    topicId,
+                    subTopicId,
+                    meta.getId(),
+                    meta.getGeoUser().getUsername(),
+                    meta.getMessage()))
         .toList();
   }
 
@@ -97,18 +107,25 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
         .map(
             meta ->
                 new SubTopicMetaDiscussionDTO(
-                    meta.getId(), meta.getGeoUser().getUsername(), subTopicId, meta.getMessage()))
+                    topicId,
+                    subTopicId,
+                    meta.getId(),
+                    meta.getGeoUser().getUsername(),
+                    meta.getMessage()))
         .stream()
         .toList();
   }
 
   @Override
   public int addMessage(SubTopicMetaDiscussionDTO subTopicMetaDiscussDTO)
-      throws GeoUserNotFoundException, SubTopicNotFoundException, SubTopicMetaDiscussionException {
+      throws GeoUserNotFoundException, SubTopicNotFoundException, SubTopicMetaDiscussionException,
+          TopicException {
     try {
       GeoUserDTO geoUserReceiverDTO = new GeoUserDTO(subTopicMetaDiscussDTO.getSenderUsername());
 
       GeoUser geoUser = geoUserServiceImpl.getUser(geoUserReceiverDTO);
+
+      Topic topic = topicService.getTopicEntityById(subTopicMetaDiscussDTO.getTopicId());
 
       SubTopic subTopic =
           subTopicService.getSubTopicEntityById(
@@ -117,11 +134,17 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
       SubTopicMetaDiscussion subTopicMetaDiscussion =
           new SubTopicMetaDiscussion(subTopicMetaDiscussDTO.getMessage(), subTopic, geoUser);
 
+      subTopicMetaDiscussion.setGeoUser(geoUser);
+
+      subTopicMetaDiscussion.setTopic(topic);
+
+      subTopicMetaDiscussion.setSubTopic(subTopic);
+
       subTopicMetaDiscussion = subTopicMetaDiscussionRepository.save(subTopicMetaDiscussion);
 
       return subTopicMetaDiscussion.getId();
 
-    } catch (GeoUserNotFoundException | SubTopicNotFoundException e) {
+    } catch (GeoUserNotFoundException | SubTopicNotFoundException | TopicNotFoundException e) {
 
       logger.error(e.getMessage(), e);
 
