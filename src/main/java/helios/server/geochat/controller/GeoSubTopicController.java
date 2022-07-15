@@ -23,20 +23,42 @@ import javax.validation.Valid;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping(path = "/geopoint/subtopic")
+@RequestMapping(path = "/geopoint/topic/{topicId}/subtopic")
 public class GeoSubTopicController {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Autowired SubTopicService subTopicService;
 
-  @GetMapping(path = "/{subTopicId}")
-  public SubTopicDTOResponse getTopicById(
-      @PathVariable("subTopicId") int subTopicId, HttpServletResponse response) {
+  @GetMapping(path = "/all")
+  public SubTopicDTOResponse getAllSubTopics(
+      @PathVariable("topicId") int topicId, HttpServletResponse response) {
 
     try {
 
-      SubTopicDTO subTopicDTO = subTopicService.getSubTopicById(subTopicId);
+      List<SubTopicDTO> SubTopicDTOList = subTopicService.getAllSubTopics(topicId);
+
+      return new SubTopicDTOOnFetchSuccessRespnse(SubTopicDTOList);
+
+    } catch (SubTopicException e) {
+
+      logger.error(e.getMessage(), e);
+
+      response.setStatus(500);
+    }
+
+    return new SubTopicDTOOnFetchFailureResponse();
+  }
+
+  @GetMapping(path = "/{subTopicId}")
+  public SubTopicDTOResponse getSubTopicById(
+      @PathVariable("topicId") int topicId,
+      @PathVariable("subTopicId") int subTopicId,
+      HttpServletResponse response) {
+
+    try {
+
+      SubTopicDTO subTopicDTO = subTopicService.getSubTopic(topicId, subTopicId);
 
       return new SubTopicDTOOnFetchSuccessRespnse(List.of(subTopicDTO));
 
@@ -48,13 +70,16 @@ public class GeoSubTopicController {
     return new SubTopicDTOOnFetchFailureResponse();
   }
 
-  @GetMapping(path = "/page/{pageNumber}")
-  public SubTopicDTOResponse getTopicsByPageNumber(
-      @PathVariable("pageNumber") int pageNumber, HttpServletResponse response) {
+  @GetMapping(path = "/page/{subTopicPageNumber}")
+  public SubTopicDTOResponse getSubTopicsByPageNumber(
+      @PathVariable("topicId") int topicId,
+      @PathVariable("subTopicPageNumber") int subTopicPageNumber,
+      HttpServletResponse response) {
 
     try {
 
-      List<SubTopicDTO> subTopicDTOList = subTopicService.getPagedSubTopics(pageNumber);
+      List<SubTopicDTO> subTopicDTOList =
+          subTopicService.getPagedSubTopics(topicId, subTopicPageNumber);
 
       return new SubTopicDTOOnFetchSuccessRespnse(subTopicDTOList);
 
@@ -74,30 +99,12 @@ public class GeoSubTopicController {
     return new SubTopicDTOOnFetchFailureResponse();
   }
 
-  @GetMapping(path = "/all")
-  public SubTopicDTOResponse getAllTopics(HttpServletResponse response) {
-
-    try {
-
-      List<SubTopicDTO> SubTopicDTOList = subTopicService.getSubAllTopics();
-
-      return new SubTopicDTOOnFetchSuccessRespnse(SubTopicDTOList);
-
-    } catch (SubTopicException e) {
-
-      logger.error(e.getMessage(), e);
-
-      response.setStatus(500);
-    }
-
-    return new SubTopicDTOOnFetchFailureResponse();
-  }
-
   @PostMapping(path = "/add")
-  public SubTopicDTOResponse addTopic(
-      HttpServletResponse response,
+  public SubTopicDTOResponse addSubTopic(
+      @PathVariable("topicId") int topicId,
       @Valid @RequestBody SubTopicDTO subTopicDTO,
-      BindingResult bindingResult)
+      BindingResult bindingResult,
+      HttpServletResponse response)
       throws InvalidRequestFormatException {
 
     try {
@@ -106,6 +113,8 @@ public class GeoSubTopicController {
 
         throw new InvalidRequestFormatException();
       }
+
+      subTopicDTO.setTopicId(topicId);
 
       SubTopicDTO persistedSubTopicDTO = subTopicService.addSubTopic(subTopicDTO);
 
@@ -129,6 +138,7 @@ public class GeoSubTopicController {
 
   @PutMapping(path = "/update/{subTopicId}")
   public SubTopicDTOResponse updateSubTopic(
+      @PathVariable("topicId") int topicId,
       @PathVariable("subTopicId") int subTopicId,
       @Valid @RequestBody SubTopicDTO subTopicDTO,
       BindingResult bindingResult,
@@ -142,7 +152,8 @@ public class GeoSubTopicController {
         throw new InvalidRequestFormatException();
       }
 
-      // setting the subTopicId received from path variable
+      subTopicDTO.setTopicId(topicId);
+
       subTopicDTO.setSubTopicId(subTopicId);
 
       subTopicService.updateSubTopic(subTopicDTO);
@@ -169,11 +180,13 @@ public class GeoSubTopicController {
 
   @DeleteMapping(path = "/delete/{subTopicId}")
   public SubTopicDTOResponse deleteTopic(
-      @PathVariable("subTopicId") int subTopicId, HttpServletResponse response) {
+      @PathVariable("topicId") int topicId,
+      @PathVariable("subTopicId") int subTopicId,
+      HttpServletResponse response) {
 
     try {
 
-      SubTopicDTO SubTopicDTO = subTopicService.deleteSubTopic(subTopicId);
+      SubTopicDTO SubTopicDTO = subTopicService.deleteSubTopic(topicId, subTopicId);
 
       return new SubTopicDTOOnFetchSuccessRespnse(List.of(SubTopicDTO));
 

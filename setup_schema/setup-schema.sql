@@ -71,9 +71,11 @@ create table if not exists subtopicmetadiscuss(
 meta_discuss_id int auto_increment,
 message varchar(250) not null,
 message_timestamp timestamp default current_timestamp(),
+topic_id int,
 sub_topic_id int,
 sender_id int,
 constraint meta_discuss_id_pk primary key(meta_discuss_id),
+constraint topic_id_fk foreign key(topic_id) references topic(topic_id),
 constraint sub_topic_id_fk foreign key(sub_topic_id) references subtopic(sub_topic_id),
 constraint sender_id_fk foreign key(sender_id) references geouser(user_id)
 )engine = MEMORY;

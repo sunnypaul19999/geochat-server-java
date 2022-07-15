@@ -42,7 +42,7 @@ public class GeoSecurityBasicUserAuthenticationProvider implements Authenticatio
 
       logger.info(
           String.format(
-              "+++++ auth for username = %s, password = %s, authorites = %s ++++++",
+              "+++++ auth for username = %s, password = %s, authorities = %s ++++++",
               authentication.getPrincipal(),
               authentication.getCredentials(),
               authentication.getAuthorities()));

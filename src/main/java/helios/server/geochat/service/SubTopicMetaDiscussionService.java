@@ -12,16 +12,18 @@ import java.util.List;
 
 public interface SubTopicMetaDiscussionService {
 
-  List<SubTopicMetaDiscussionDTO> getAllMessages(int subtopicId) throws SubTopicNotFoundException;
+  List<SubTopicMetaDiscussionDTO> getAllMessages(int topicId, int subtopicId)
+      throws SubTopicNotFoundException;
 
-  List<SubTopicMetaDiscussionDTO> getPagedMessages(int subtopicId, int pageNumber)
+  List<SubTopicMetaDiscussionDTO> getPagedMessages(
+      int topicId, int subtopicId, int messagePageNumber)
       throws SubTopicNotFoundException, SubTopicMetaDiscussionPageNumberNotInRangeException;
 
-  SubTopicMetaDiscussion getMessageById(int messageId)
+  SubTopicMetaDiscussion getMessageById(int topicId, int subtopicId, int messageId)
       throws SubTopicMetaDiscussionNotFoundException, SubTopicMetaDiscussionException;
 
   int addMessage(SubTopicMetaDiscussionDTO subTopicMetaDiscussDTO)
       throws SubTopicNotFoundException, SubTopicMetaDiscussionException, GeoUserNotFoundException;
 
-  void deleteMessage(int messageId) throws SubTopicMetaDiscussionException;
+  void deleteMessage(int topicId, int subtopicId, int messageId) throws SubTopicMetaDiscussionException;
 }

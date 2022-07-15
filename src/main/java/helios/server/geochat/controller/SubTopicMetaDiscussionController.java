@@ -18,13 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/geopoint/subTopiMetaDiscussion")
+@RequestMapping(path = "/geopoint/topic/{topicId}/subTopic/{subTopicId}/subTopiMetaDiscussion")
 public class SubTopicMetaDiscussionController {
 
   @Autowired SubTopicMetaDiscussionService subTopicMetaDiscussionService;
 
-  @GetMapping(path = "/subTopic/{subTopicId}/page/{pageNumber}")
+  @GetMapping(path = "/page/{pageNumber}")
   public SubTopicMetaDiscussionDTOResponse getAll(
+      @PathVariable("topicId") int topicId,
       @PathVariable("subTopicId") int subTopicId,
       @PathVariable("pageNumber") int pageNumber,
       HttpServletResponse response) {
@@ -32,7 +33,7 @@ public class SubTopicMetaDiscussionController {
     try {
 
       return new SubTopicMetaDiscussionDTOOnFetchSuccessResponse(
-          subTopicMetaDiscussionService.getPagedMessages(subTopicId, pageNumber));
+          subTopicMetaDiscussionService.getPagedMessages(topicId, subTopicId, pageNumber));
 
     } catch (SubTopicMetaDiscussionPageNumberNotInRangeException e) {
 
@@ -48,14 +49,16 @@ public class SubTopicMetaDiscussionController {
     }
   }
 
-  @GetMapping(path = "/subTopic/{subTopicId}/all")
+  @GetMapping(path = "/all")
   public SubTopicMetaDiscussionDTOResponse getAll(
-      @PathVariable("subTopicId") int subTopicId, HttpServletResponse response) {
+      @PathVariable("topicId") int topicId,
+      @PathVariable("subTopicId") int subTopicId,
+      HttpServletResponse response) {
 
     try {
 
       return new SubTopicMetaDiscussionDTOOnFetchSuccessResponse(
-          subTopicMetaDiscussionService.getAllMessages(subTopicId));
+          subTopicMetaDiscussionService.getAllMessages(topicId, subTopicId));
 
     } catch (SubTopicNotFoundException e) {
 
@@ -67,6 +70,8 @@ public class SubTopicMetaDiscussionController {
 
   @PostMapping(path = "/add")
   public SubTopicMetaDiscussionDTOResponse addMessage(
+      @PathVariable("topicId") int topicId,
+      @PathVariable("subTopicId") int subTopicId,
       @Valid @RequestBody SubTopicMetaDiscussionDTO subTopicMetaDiscussionDTO,
       BindingResult bindingResult,
       HttpServletResponse response)
@@ -78,6 +83,10 @@ public class SubTopicMetaDiscussionController {
 
         throw new InvalidRequestFormatException();
       }
+
+      subTopicMetaDiscussionDTO.setTopicId(topicId);
+
+      subTopicMetaDiscussionDTO.setSubTopicId(subTopicId);
 
       int messageId = subTopicMetaDiscussionService.addMessage(subTopicMetaDiscussionDTO);
 
@@ -105,11 +114,14 @@ public class SubTopicMetaDiscussionController {
 
   @DeleteMapping(path = "/message/delete/{metaDiscussId}")
   public SubTopicMetaDiscussionDTOResponse deleteSubtopic(
-      @PathVariable("metaDiscussId") int metaDiscussId, HttpServletResponse response) {
+      @PathVariable("topicId") int topicId,
+      @PathVariable("subTopicId") int subTopicId,
+      @PathVariable("metaDiscussId") int metaDiscussId,
+      HttpServletResponse response) {
 
     try {
 
-      subTopicMetaDiscussionService.deleteMessage(metaDiscussId);
+      subTopicMetaDiscussionService.deleteMessage(topicId, subTopicId, metaDiscussId);
 
       return new SubTopicMetaDiscussionDTOOnAddSuccessResponse(metaDiscussId);
 

@@ -13,7 +13,9 @@ import java.util.List;
 public interface SubTopicMetaDiscussionRepository
     extends JpaRepository<SubTopicMetaDiscussion, Integer> {
 
-  List<SubTopicMetaDiscussion> findBySubTopicId(int subTopicId, Sort sort);
+  Page<SubTopicMetaDiscussion> findByTopicTopicIdAndSubTopicId(
+      int topicId, int subTopicId, Pageable pageable);
 
-  Page<SubTopicMetaDiscussion> findBySubTopicId(int subTopicId, Pageable pageable);
+  List<SubTopicMetaDiscussion> findByTopicTopicIdAndSubTopicId(
+      int topicId, int subTopicId, Sort sort);
 }

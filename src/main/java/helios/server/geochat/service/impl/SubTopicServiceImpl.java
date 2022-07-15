@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import helios.server.geochat.service.SubTopicService;
@@ -34,9 +35,10 @@ public class SubTopicServiceImpl implements SubTopicService {
   private Exception e;
 
   @Override
-  public SubTopic getSubTopicEntityById(int subTopicId) throws SubTopicNotFoundException {
+  public SubTopic getSubTopicEntityById(int topicId, int subTopicId)
+      throws SubTopicNotFoundException {
 
-    Optional<SubTopic> subTopic = subTopicRepository.findById(subTopicId);
+    Optional<SubTopic> subTopic = subTopicRepository.findByTopicTopicIdAndId(topicId, subTopicId);
 
     if (subTopic.isPresent()) {
 
@@ -47,9 +49,10 @@ public class SubTopicServiceImpl implements SubTopicService {
   }
 
   @Override
-  public SubTopicDTO getSubTopicById(int subTopicId) throws SubTopicNotFoundException {
+  public SubTopicDTO getSubTopic(int topicId, int subTopicId) throws SubTopicNotFoundException {
+    // todo: check if topic exits
 
-    Optional<SubTopic> subTopic = subTopicRepository.findById(subTopicId);
+    Optional<SubTopic> subTopic = subTopicRepository.findByTopicTopicIdAndId(topicId, subTopicId);
 
     if (subTopic.isPresent()) {
 
@@ -61,19 +64,22 @@ public class SubTopicServiceImpl implements SubTopicService {
   }
 
   @Override
-  public List<SubTopicDTO> getPagedSubTopics(int pageNumber) throws SubTopicException {
+  public List<SubTopicDTO> getPagedSubTopics(int topicId, int subTopicPageNumber)
+      throws SubTopicException {
 
-    if (pageNumber <= 0) {
+    if (subTopicPageNumber <= 0) {
 
       throw new SubTopicPageNumberNotInRangeException();
     }
 
     try {
+      // todo: check if topic exits
 
-      PageRequest pageable = PageRequest.of(pageNumber - 1, 5);
+      PageRequest pageable =
+          PageRequest.of(subTopicPageNumber - 1, 5, Sort.by(Sort.Order.asc("id")));
 
       return subTopicRepository
-          .findAll(pageable)
+          .findByTopicTopicId(topicId, pageable)
           .map(
               subTopic ->
                   new SubTopicDTO(subTopic.getId(), subTopic.getTitle(), subTopic.getDescription()))
@@ -87,10 +93,14 @@ public class SubTopicServiceImpl implements SubTopicService {
   }
 
   @Override
-  public List<SubTopicDTO> getSubAllTopics() throws SubTopicException {
+  public List<SubTopicDTO> getAllSubTopics(int topicId) throws SubTopicException {
     try {
 
-      return subTopicRepository.findAll().stream()
+      // todo: check if topic exits
+
+      return subTopicRepository
+          .findAllByTopicTopicId(topicId, Sort.by(Sort.Order.asc("id")))
+          .stream()
           .map(
               subTopic ->
                   new SubTopicDTO(subTopic.getId(), subTopic.getTitle(), subTopic.getDescription()))
@@ -133,7 +143,8 @@ public class SubTopicServiceImpl implements SubTopicService {
   public void updateSubTopic(SubTopicDTO subTopicDTO) throws SubTopicException {
     try {
 
-      SubTopic subTopic = getSubTopicEntityById(subTopicDTO.getSubTopicId());
+      SubTopic subTopic =
+          getSubTopicEntityById(subTopicDTO.getTopicId(), subTopicDTO.getSubTopicId());
 
       subTopic.setTitle(subTopicDTO.getSubTopicTitle());
 
@@ -155,11 +166,11 @@ public class SubTopicServiceImpl implements SubTopicService {
   }
 
   @Override
-  public SubTopicDTO deleteSubTopic(int subTopicId) throws SubTopicException {
+  public SubTopicDTO deleteSubTopic(int topicId, int subTopicId) throws SubTopicException {
 
     try {
 
-      SubTopic subTopic = getSubTopicEntityById(subTopicId);
+      SubTopic subTopic = getSubTopicEntityById(topicId, subTopicId);
 
       subTopicRepository.delete(subTopic);
 

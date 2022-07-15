@@ -79,7 +79,7 @@ public class MainApplication {
         .antMatchers("/user/login")
         .authenticated()
         .antMatchers("/geopoint/**/delete/{id}")
-        .hasAuthority("ADMIN")
+        .hasAuthority("USER")
         .anyRequest()
         .authenticated();
 

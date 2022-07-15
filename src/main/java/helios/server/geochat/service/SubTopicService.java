@@ -13,17 +13,17 @@ import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceExcepti
 
 public interface SubTopicService {
 
-  SubTopic getSubTopicEntityById(int subTopicId) throws SubTopicNotFoundException;
+  SubTopic getSubTopicEntityById(int topicId, int subTopicId) throws SubTopicNotFoundException;
 
-  SubTopicDTO getSubTopicById(int subTopicId) throws SubTopicNotFoundException;
+  SubTopicDTO getSubTopic(int topicId, int subTopicId) throws SubTopicNotFoundException;
 
-  List<SubTopicDTO> getPagedSubTopics(int pageNumber) throws SubTopicException;
+  List<SubTopicDTO> getPagedSubTopics(int topicId, int subTopicPageNumber) throws SubTopicException;
 
-  List<SubTopicDTO> getSubAllTopics() throws SubTopicException;
+  List<SubTopicDTO> getAllSubTopics(int topicId) throws SubTopicException;
+
+  SubTopicDTO addSubTopic(SubTopicDTO topicDTO) throws SubTopicException, TopicException;
 
   void updateSubTopic(SubTopicDTO subTopicDTO) throws SubTopicException;
 
-  SubTopicDTO deleteSubTopic(int topicId) throws SubTopicException;
-
-  SubTopicDTO addSubTopic(SubTopicDTO topicDTO) throws SubTopicException, TopicException;
+  SubTopicDTO deleteSubTopic(int topicId, int subTopicId) throws SubTopicException;
 }

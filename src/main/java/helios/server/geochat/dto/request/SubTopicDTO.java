@@ -11,17 +11,22 @@ import org.hibernate.validator.constraints.Length;
 public class SubTopicDTO {
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private int subTopicId;
+  private String geoPointPlusCode;
 
-  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private int topicId;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private int subTopicId;
 
   @NotNull
   @Length(min = 2, max = 250)
+  @JsonProperty(access = JsonProperty.Access.READ_WRITE)
   private String subTopicTitle;
 
   @NotNull
   @Length(min = 2, max = 4000)
+  @JsonProperty(access = JsonProperty.Access.READ_WRITE)
   private String subTopicDescription;
 
   public SubTopicDTO() {}
@@ -37,12 +42,12 @@ public class SubTopicDTO {
     this.subTopicDescription = description;
   }
 
-  public int getSubTopicId() {
-    return subTopicId;
+  public String getGeoPointPlusCode() {
+    return geoPointPlusCode;
   }
 
-  public void setSubTopicId(int subTopicId) {
-    this.subTopicId = subTopicId;
+  public void setGeoPointPlusCode(String geoPointPlusCode) {
+    this.geoPointPlusCode = geoPointPlusCode;
   }
 
   public int getTopicId() {
@@ -51,6 +56,14 @@ public class SubTopicDTO {
 
   public void setTopicId(int topicId) {
     this.topicId = topicId;
+  }
+
+  public int getSubTopicId() {
+    return subTopicId;
+  }
+
+  public void setSubTopicId(int subTopicId) {
+    this.subTopicId = subTopicId;
   }
 
   public String getSubTopicTitle() {

@@ -39,7 +39,7 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
   @Autowired SubTopicMetaDiscussionRepository subTopicMetaDiscussionRepository;
 
   @Override
-  public SubTopicMetaDiscussion getMessageById(int messageId)
+  public SubTopicMetaDiscussion getMessageById(int topicId, int subtopicId, int messageId)
       throws SubTopicMetaDiscussionException {
     try {
       Optional<SubTopicMetaDiscussion> sOptional =
@@ -59,14 +59,14 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
   }
 
   @Override
-  public List<SubTopicMetaDiscussionDTO> getAllMessages(int subTopicId)
+  public List<SubTopicMetaDiscussionDTO> getAllMessages(int topicId, int subTopicId)
       throws SubTopicNotFoundException {
 
-    subTopicService.getSubTopicById(subTopicId);
+    subTopicService.getSubTopic(topicId, subTopicId);
 
     List<SubTopicMetaDiscussion> subTopicMeta =
-        subTopicMetaDiscussionRepository.findBySubTopicId(
-            subTopicId, Sort.by(Sort.Order.asc("id")));
+        subTopicMetaDiscussionRepository.findByTopicTopicIdAndSubTopicId(
+            topicId, subTopicId, Sort.by(Sort.Order.asc("id")));
 
     return subTopicMeta.stream()
         .map(
@@ -77,17 +77,19 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
   }
 
   @Override
-  public List<SubTopicMetaDiscussionDTO> getPagedMessages(int subTopicId, int pageNumber)
+  public List<SubTopicMetaDiscussionDTO> getPagedMessages(
+      int topicId, int subTopicId, int pageNumber)
       throws SubTopicNotFoundException, SubTopicMetaDiscussionPageNumberNotInRangeException {
 
     if (pageNumber <= 0) {
       throw new SubTopicMetaDiscussionPageNumberNotInRangeException();
     }
 
-    SubTopicDTO subTopicDTO = subTopicService.getSubTopicById(subTopicId);
+    SubTopicDTO subTopicDTO = subTopicService.getSubTopic(topicId, subTopicId);
 
     Page<SubTopicMetaDiscussion> subTopicMetaDiscussionPaged =
-        subTopicMetaDiscussionRepository.findBySubTopicId(
+        subTopicMetaDiscussionRepository.findByTopicTopicIdAndSubTopicId(
+            topicId,
             subTopicDTO.getSubTopicId(),
             PageRequest.of(pageNumber - 1, 5, Sort.by(Sort.Order.asc("id"))));
 
@@ -109,7 +111,8 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
       GeoUser geoUser = geoUserServiceImpl.getUser(geoUserReceiverDTO);
 
       SubTopic subTopic =
-          subTopicService.getSubTopicEntityById(subTopicMetaDiscussDTO.getSubTopicId());
+          subTopicService.getSubTopicEntityById(
+              subTopicMetaDiscussDTO.getTopicId(), subTopicMetaDiscussDTO.getSubTopicId());
 
       SubTopicMetaDiscussion subTopicMetaDiscussion =
           new SubTopicMetaDiscussion(subTopicMetaDiscussDTO.getMessage(), subTopic, geoUser);
@@ -133,9 +136,11 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
   }
 
   @Override
-  public void deleteMessage(int messageId) throws SubTopicMetaDiscussionException {
+  public void deleteMessage(int topicId, int subtopicId, int messageId)
+      throws SubTopicMetaDiscussionException {
     try {
-      SubTopicMetaDiscussion subTopicMetaDiscussion = getMessageById(messageId);
+      SubTopicMetaDiscussion subTopicMetaDiscussion =
+          getMessageById(topicId, subtopicId, messageId);
 
       subTopicMetaDiscussionRepository.delete(subTopicMetaDiscussion);
 

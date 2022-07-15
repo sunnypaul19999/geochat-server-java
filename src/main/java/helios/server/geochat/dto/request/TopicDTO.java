@@ -8,17 +8,19 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 
-@JsonIgnoreProperties(value = "id", allowGetters = true)
+@JsonIgnoreProperties(value = "id", allowGetters = true, ignoreUnknown = true)
 public class TopicDTO {
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private String plusCode;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private int id;
 
   @NotNull
   @Length(min = 2, max = 250)
+  @JsonProperty(access = JsonProperty.Access.READ_WRITE)
   private String topicTitle;
-
-  @JsonIgnore private String plusCode;
 
   public TopicDTO(@NotNull @Length(min = 80, max = 250) String title) {
     this.topicTitle = title;
