@@ -100,6 +100,8 @@ public class GeoUserController {
       final Cookie cookie = new Cookie("geoChatJwtToken", jwtToken.get());
 
       cookie.setHttpOnly(true);
+      
+      cookie.setPath("/");
 
       httpServletResponse.addCookie(cookie);
 

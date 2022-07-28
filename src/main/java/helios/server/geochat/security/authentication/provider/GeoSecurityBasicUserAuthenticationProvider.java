@@ -1,5 +1,7 @@
 package helios.server.geochat.security.authentication.provider;
 
+import helios.server.geochat.exceptions.securityException.GeoUserAuthenticationException;
+import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +14,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import helios.server.geochat.exceptions.securityException.GeoUserAuthenticationException;
-import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 
 public class GeoSecurityBasicUserAuthenticationProvider implements AuthenticationProvider {
 
@@ -54,8 +53,11 @@ public class GeoSecurityBasicUserAuthenticationProvider implements Authenticatio
           (String) authentication.getCredentials(), userDetails.getPassword())) {
 
         StringBuilder authString = new StringBuilder();
+
         for (GrantedAuthority auth : userDetails.getAuthorities()) {
+
           authString = authString.append(auth.getAuthority());
+
           authString.append(" ");
         }
 

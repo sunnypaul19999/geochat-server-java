@@ -3,6 +3,7 @@ package helios.server.geochat.security.authentication.filter;
 import helios.server.geochat.dto.request.GeoUserDTO;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
 import helios.server.geochat.model.GeoUser;
+import helios.server.geochat.security.authentication.JWTAuthentication;
 import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
@@ -10,6 +11,7 @@ import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -61,6 +63,10 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         if (geoUser.getJwtToken().equals(jwtToken)) {
 
           response.setStatus(200);
+          
+          SecurityContextHolder.getContext().setAuthentication(new JWTAuthentication(
+                  geoUser.getUsername(), geoUser.getJwtToken(), geoUser.getRole()
+          ));
 
           return;
         }
