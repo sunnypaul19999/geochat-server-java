@@ -1,21 +1,25 @@
 package helios.server.geochat;
 
+import helios.server.geochat.security.authentication.filter.JWTAuthFilter;
+import helios.server.geochat.security.authentication.provider.GeoSecurityBasicUserAuthenticationProvider;
+import helios.server.geochat.security.authentication.provider.JWTAuthenticationProvider;
+import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import helios.server.geochat.security.authenticationProvider.basicAuthenticationProvider.GeoSecurityBasicUserAuthenticationProvider;
-import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -25,7 +29,15 @@ import java.util.List;
 @EnableWebSecurity
 public class MainApplication {
 
+  private final Logger logger = LoggerFactory.getLogger(getClass());
+
   @Autowired GeoSecurityUserServiceImpl geoSecurityUserServiceImpl;
+
+  @Autowired private AuthenticationConfiguration authenticationConfiguration;
+
+  public static void main(String[] args) {
+    SpringApplication.run(MainApplication.class, args);
+  }
 
   public void configureCors(HttpSecurity http) throws Exception {
 
@@ -35,7 +47,8 @@ public class MainApplication {
               httpRequest -> {
                 CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-                corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:3001"));
+                corsConfiguration.setAllowedOrigins(
+                    List.of("http://localhost:3000", "http://localhost:3001"));
 
                 // client will be sending in cookies and the authorization header
                 corsConfiguration.setAllowCredentials(true);
@@ -55,8 +68,6 @@ public class MainApplication {
                         HttpMethod.DELETE.toString(),
                         HttpMethod.PUT.toString()));
 
-
-
                 return corsConfiguration;
               };
 
@@ -70,12 +81,16 @@ public class MainApplication {
     // csrf disabled
     http.csrf().disable();
 
+    // configuring cors
     configureCors(http);
-
-    //http.cors().disable();
 
     // adding the authentication provider
     http.authenticationProvider(geoSecurityBasicUserAuthenticationProvider());
+
+    // adding JWTFilter
+    http.addFilterAt(
+        new JWTAuthFilter(authenticationManager(authenticationConfiguration)),
+        UsernamePasswordAuthenticationFilter.class);
 
     http.authorizeRequests()
         .antMatchers("/user/register")
@@ -93,17 +108,14 @@ public class MainApplication {
     return http.build();
   }
 
-  //  @Bean
-  //  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-  //
-  //    configureCors(http);
-  //
-  //    http.csrf().disable().authorizeRequests().anyRequest().permitAll();
-  //
-  //    return http.build();
-  //  }
+  @Bean
+  public AuthenticationManager authenticationManager(
+      AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
-  // creating bean for basic authentication provider
+    return authenticationConfiguration.getAuthenticationManager();
+  }
+
+  //   creating bean for basic authentication provider
   @Bean
   public GeoSecurityBasicUserAuthenticationProvider geoSecurityBasicUserAuthenticationProvider() {
     return new GeoSecurityBasicUserAuthenticationProvider(
@@ -118,17 +130,5 @@ public class MainApplication {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return NoOpPasswordEncoder.getInstance();
-  }
-
-
-  @Bean
-  @Autowired
-  public  AuthenticationManager authenticationManager(AuthenticationManager authenticationManager){
-
-      return authenticationManager;
-  }
-
-  public static void main(String[] args) {
-    SpringApplication.run(MainApplication.class, args);
   }
 }

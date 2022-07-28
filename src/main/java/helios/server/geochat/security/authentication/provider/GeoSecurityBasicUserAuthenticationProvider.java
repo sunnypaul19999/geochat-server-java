@@ -1,4 +1,4 @@
-package helios.server.geochat.security.authenticationProvider.basicAuthenticationProvider;
+package helios.server.geochat.security.authentication.provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

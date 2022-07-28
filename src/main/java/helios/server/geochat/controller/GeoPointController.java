@@ -98,6 +98,11 @@ public class GeoPointController {
     return session.getAttribute("geoPointPlusCode").toString();
   }
 
+
+  @PostMapping(path = "/auth-header-test")
+  public void authHeaderTest(){}
+
+
   @ExceptionHandler(value = InvalidRequestFormatException.class)
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
   public InvalidRequestFormatGlobalResponse invalidDataRequest(HttpMessageNotReadableException e) {
