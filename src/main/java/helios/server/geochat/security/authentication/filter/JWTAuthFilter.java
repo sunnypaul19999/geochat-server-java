@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -65,15 +66,17 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         if (geoUser.getJwtToken() != null && geoUser.getJwtToken().equals(jwtToken)) {
 
-          SecurityContextHolder.getContext()
-              .setAuthentication(
-                  new JWTAuthentication(
-                      geoUser.getUsername(), geoUser.getJwtToken(), geoUser.getRole()));
+          if (new Date(System.currentTimeMillis()).before(jwtBody.getExpiration())) {
+            SecurityContextHolder.getContext()
+                .setAuthentication(
+                    new JWTAuthentication(
+                        geoUser.getUsername(), geoUser.getJwtToken(), geoUser.getRole()));
 
-          // pass into the filter chain on successful authorization
-          filterChain.doFilter(request, response);
+            // pass into the filter chain on successful authorization
+            filterChain.doFilter(request, response);
 
-          return;
+            return;
+          }
         }
       } catch (GeoUserNotFoundException e) {
 
