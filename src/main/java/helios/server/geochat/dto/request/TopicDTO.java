@@ -26,9 +26,10 @@ public class TopicDTO {
     this.topicTitle = title;
   }
 
-  public TopicDTO(@NotNull int id, @NotNull @Length(min = 80, max = 250) String title) {
+  public TopicDTO(String plusCode, int id, String topicTitle) {
+    this.plusCode = plusCode;
     this.id = id;
-    this.topicTitle = title;
+    this.topicTitle = topicTitle;
   }
 
   public int getId() {

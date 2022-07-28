@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/geopoint/topic/{topicId}/subTopic/{subTopicId}/subTopiMetaDiscussion")
+@RequestMapping(path = "/geopoint/topic/{topicId}/subTopic/{subTopicId}/subTopicMetaDiscussion")
 public class SubTopicMetaDiscussionController {
 
   @Autowired SubTopicMetaDiscussionService subTopicMetaDiscussionService;

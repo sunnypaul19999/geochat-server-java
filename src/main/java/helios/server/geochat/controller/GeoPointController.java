@@ -4,6 +4,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import helios.server.geochat.dto.response.globalresponse.InvalidRequestFormatGlobalResponse;
 import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -12,8 +13,11 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 
 import helios.server.geochat.dto.request.UserLocationDTO;
@@ -92,5 +96,17 @@ public class GeoPointController {
   public String setPlusCode(HttpSession session) {
     session.setAttribute("geoPointPlusCode", "plusCode");
     return session.getAttribute("geoPointPlusCode").toString();
+  }
+
+  @ExceptionHandler(value = InvalidRequestFormatException.class)
+  @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+  public InvalidRequestFormatGlobalResponse invalidDataRequest(HttpMessageNotReadableException e) {
+
+    logger.error("Rejecting DTO. Has binding errors.");
+
+    InvalidRequestFormatGlobalResponse invalidRequestFormatGlobalResponse =
+        new InvalidRequestFormatGlobalResponse();
+
+    return invalidRequestFormatGlobalResponse;
   }
 }

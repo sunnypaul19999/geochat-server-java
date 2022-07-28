@@ -3,6 +3,7 @@ package helios.server.geochat.controller;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import helios.server.geochat.dto.response.globalresponse.InvalidRequestFormatGlobalResponse;
 import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 
 import helios.server.geochat.dto.request.NewGeoUserDTO;
@@ -94,21 +96,5 @@ public class GeoUserController {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     authentication.setAuthenticated(false);
-  }
-
-  @ExceptionHandler(value = HttpMessageNotReadableException.class)
-  @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
-  public GeoUserDTOOnRegiseterFailureResponse invalidDataRequest(
-      HttpMessageNotReadableException e) {
-    logger.info("Rejecting userLocationDTO values sent by user. Not valid has binding errors.");
-
-    GeoUserDTOOnRegiseterFailureResponse onRegisterDataBindfailure =
-        new GeoUserDTOOnRegiseterFailureResponse();
-
-    onRegisterDataBindfailure.setHasDataBindingfieldError(true);
-
-    onRegisterDataBindfailure.setMessage("Data binding error");
-
-    return onRegisterDataBindfailure;
   }
 }

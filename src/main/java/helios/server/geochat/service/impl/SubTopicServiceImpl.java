@@ -28,11 +28,9 @@ import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceExcepti
 @Service
 public class SubTopicServiceImpl implements SubTopicService {
 
-  private Logger logger = LoggerFactory.getLogger(getClass());
-
   @Autowired TopicService topicService;
-
   @Autowired SubTopicRepository subTopicRepository;
+  private Logger logger = LoggerFactory.getLogger(getClass());
   private Exception e;
 
   @Override
@@ -83,7 +81,11 @@ public class SubTopicServiceImpl implements SubTopicService {
           .findByTopicTopicId(topicId, pageable)
           .map(
               subTopic ->
-                  new SubTopicDTO(subTopic.getId(), subTopic.getTitle(), subTopic.getDescription()))
+                  new SubTopicDTO(
+                      subTopic.getTopic().getTopicId(),
+                      subTopic.getId(),
+                      subTopic.getTitle(),
+                      subTopic.getDescription()))
           .stream()
           .toList();
 
@@ -109,7 +111,11 @@ public class SubTopicServiceImpl implements SubTopicService {
           .stream()
           .map(
               subTopic ->
-                  new SubTopicDTO(subTopic.getId(), subTopic.getTitle(), subTopic.getDescription()))
+                  new SubTopicDTO(
+                      subTopic.getTopic().getTopicId(),
+                      subTopic.getId(),
+                      subTopic.getTitle(),
+                      subTopic.getDescription()))
           .toList();
 
     } catch (TopicNotFoundException e) {

@@ -5,8 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +35,7 @@ public class MainApplication {
               httpRequest -> {
                 CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-                corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+                corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:3001"));
 
                 // client will be sending in cookies and the authorization header
                 corsConfiguration.setAllowCredentials(true);
@@ -53,6 +55,8 @@ public class MainApplication {
                         HttpMethod.DELETE.toString(),
                         HttpMethod.PUT.toString()));
 
+
+
                 return corsConfiguration;
               };
 
@@ -68,7 +72,7 @@ public class MainApplication {
 
     configureCors(http);
 
-    // http.cors().disable();
+    //http.cors().disable();
 
     // adding the authentication provider
     http.authenticationProvider(geoSecurityBasicUserAuthenticationProvider());
@@ -114,6 +118,14 @@ public class MainApplication {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return NoOpPasswordEncoder.getInstance();
+  }
+
+
+  @Bean
+  @Autowired
+  public  AuthenticationManager authenticationManager(AuthenticationManager authenticationManager){
+
+      return authenticationManager;
   }
 
   public static void main(String[] args) {

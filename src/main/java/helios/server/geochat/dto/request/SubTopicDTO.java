@@ -31,15 +31,18 @@ public class SubTopicDTO {
 
   public SubTopicDTO() {}
 
-  public SubTopicDTO(String subTopicTitle, String description) {
-    this.subTopicTitle = subTopicTitle;
-    this.subTopicDescription = description;
-  }
 
-  public SubTopicDTO(int subTopicId, String subTopicTitle, String description) {
+  public SubTopicDTO(int subTopicId, String subTopicTitle, String subTopicDescription) {
     this.subTopicId = subTopicId;
     this.subTopicTitle = subTopicTitle;
-    this.subTopicDescription = description;
+    this.subTopicDescription = subTopicDescription;
+  }
+
+  public SubTopicDTO(int topicId, int subTopicId, String subTopicTitle, String subTopicDescription) {
+    this.topicId = topicId;
+    this.subTopicId = subTopicId;
+    this.subTopicTitle = subTopicTitle;
+    this.subTopicDescription = subTopicDescription;
   }
 
   public String getGeoPointPlusCode() {

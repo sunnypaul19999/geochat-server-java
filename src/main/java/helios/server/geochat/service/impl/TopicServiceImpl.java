@@ -27,6 +27,8 @@ import helios.server.geochat.dto.request.TopicDTO;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 
+import javax.persistence.EntityManager;
+
 @Service
 public class TopicServiceImpl implements TopicService {
 
@@ -70,7 +72,10 @@ public class TopicServiceImpl implements TopicService {
 
       if (topic.isPresent()) {
 
-        return new TopicDTO(topic.get().getTopicId(), topic.get().getTopicTitle());
+        return new TopicDTO(
+            topic.get().getGeoPoint().getPlusCode(),
+            topic.get().getTopicId(),
+            topic.get().getTopicTitle());
       }
 
     } catch (Exception e) {
@@ -96,7 +101,7 @@ public class TopicServiceImpl implements TopicService {
 
       return topicRepository
           .findByGeoPointPlusCode(geoPointPLusCode, pageable)
-          .map(topic -> new TopicDTO(topic.getTopicId(), topic.getTopicTitle()))
+          .map(topic -> new TopicDTO(geoPointPLusCode, topic.getTopicId(), topic.getTopicTitle()))
           .stream()
           .toList();
 
@@ -116,7 +121,7 @@ public class TopicServiceImpl implements TopicService {
       return topicRepository
           .findAllByGeoPointPlusCode(geoPointPLusCode, Sort.by(Sort.Order.asc("topicId")))
           .stream()
-          .map(topic -> new TopicDTO(topic.getTopicId(), topic.getTopicTitle()))
+          .map(topic -> new TopicDTO(geoPointPLusCode, topic.getTopicId(), topic.getTopicTitle()))
           .toList();
 
     } catch (Exception e) {
@@ -163,7 +168,10 @@ public class TopicServiceImpl implements TopicService {
         topicRepository.delete(topic.get());
 
         // returns the topic entity object after persisting the deleted entity
-        return new TopicDTO(topic.get().getTopicId(), topic.get().getTopicTitle());
+        return new TopicDTO(
+            topic.get().getGeoPoint().getPlusCode(),
+            topic.get().getTopicId(),
+            topic.get().getTopicTitle());
 
       } else {
 

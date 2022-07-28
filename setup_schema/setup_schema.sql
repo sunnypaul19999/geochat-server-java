@@ -1,12 +1,14 @@
 use geochatserver;
 
+select * from geopoint;
+
 select * from geouser;
 
 select * from geouserrole;
 
 select * from geouser_assumable_role;
 
-select * from geopoint;
+
 
 select * from geopointrange;
 
@@ -18,17 +20,6 @@ select * from subtopicmetadiscuss;
 
 /*6FJ42222+22*/
 
-insert into topic values(1,"this my topic", "6FJ42222+22");
-
-insert into topic values(2,"this my 2 second topic", "6FJ42222+22");
-
-insert into topic values(3,"this my 3 topic", "6FJ42222+22");
-
-insert into topic values(4,"this my 4 topic", "6FJ42222+22");
-
-insert into topic values(5,"this my 5 topic", "6FJ42222+22");
-
-insert into topic values(6,"this my 6 topic", "6FJ42222+22");
 
 insert into subtopic (topic_id, sub_topic_id, sub_topic_title, sub_topic_description) values(1,1, "This subtopic 1", "subtopic description 1");
 
