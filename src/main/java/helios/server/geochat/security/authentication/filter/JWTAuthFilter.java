@@ -31,9 +31,9 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
   private final GeoSecurityUserServiceImpl geoUserService;
 
-  private Cookie jwtTokenCookie;
-
   private final Logger logger = LoggerFactory.getLogger(getClass());
+
+  private Cookie jwtTokenCookie;
 
   public JWTAuthFilter(
       AuthenticationManager authenticationManager, GeoSecurityUserServiceImpl geoUserService) {
@@ -56,17 +56,22 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     logger.debug(String.format("--- Username : %s ", jwtBody));
 
     if (jwtParser.isSigned(jwtToken)) {
+
       final GeoUserDTO geoUserDTO = new GeoUserDTO((String) jwtBody.get("username"));
+
       try {
+
         final GeoUser geoUser = geoUserService.getUser(geoUserDTO);
 
-        if (geoUser.getJwtToken().equals(jwtToken)) {
+        if (geoUser.getJwtToken() != null && geoUser.getJwtToken().equals(jwtToken)) {
 
-          response.setStatus(200);
-          
-          SecurityContextHolder.getContext().setAuthentication(new JWTAuthentication(
-                  geoUser.getUsername(), geoUser.getJwtToken(), geoUser.getRole()
-          ));
+          SecurityContextHolder.getContext()
+              .setAuthentication(
+                  new JWTAuthentication(
+                      geoUser.getUsername(), geoUser.getJwtToken(), geoUser.getRole()));
+
+          // pass into the filter chain on successful authorization
+          filterChain.doFilter(request, response);
 
           return;
         }
@@ -74,8 +79,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         response.setStatus(400);
       }
-
-      response.setStatus(403);
     }
 
     response.setStatus(403);

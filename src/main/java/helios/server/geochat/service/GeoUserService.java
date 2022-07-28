@@ -22,4 +22,6 @@ public interface GeoUserService {
   void deleteUser(GeoUserDTO geoUserDTO) throws GeoUserException;
 
   Optional<String> setJwtToken(GeoUserDTO geoUserDTO) throws GeoUserException;
+
+  void resetJwtToken(GeoUserDTO geoUserDTO) throws GeoUserException;
 }

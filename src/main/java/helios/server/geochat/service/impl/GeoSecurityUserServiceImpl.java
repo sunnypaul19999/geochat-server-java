@@ -1,13 +1,18 @@
 package helios.server.geochat.service.impl;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
-
+import helios.server.geochat.dto.request.GeoUserDTO;
+import helios.server.geochat.dto.request.NewGeoUserDTO;
+import helios.server.geochat.dto.request.VerifyGeoUserDTO;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
+import helios.server.geochat.model.GeoUser;
 import helios.server.geochat.model.GeoUserAssumableRole;
+import helios.server.geochat.repository.GeoUserRepository;
+import helios.server.geochat.security.GeoSecurityUserDetails;
 import helios.server.geochat.service.GeoUserAssumableRoleService;
+import helios.server.geochat.service.GeoUserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
@@ -18,19 +23,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import helios.server.geochat.dto.request.GeoUserDTO;
-import helios.server.geochat.dto.request.NewGeoUserDTO;
-import helios.server.geochat.dto.request.VerifyGeoUserDTO;
-
-import helios.server.geochat.model.GeoUser;
-
-import helios.server.geochat.repository.GeoUserRepository;
-import helios.server.geochat.security.GeoSecurityUserDetails;
-import helios.server.geochat.service.GeoUserService;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsService {
@@ -49,6 +46,20 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
     this.geoUserAssumableRoleService = geoUserAssumableRoleService;
   }
 
+  public String getJWTToken(GeoUser geoUser) {
+
+    final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+    return Jwts.builder()
+        .setIssuer("geo-chat")
+        .setSubject("jwt-token")
+        .claim("username", geoUser.getUsername())
+        .setIssuedAt(timestamp)
+        .setExpiration(new Date(timestamp.getTime() + Duration.ofDays(14).toMillis()))
+        .signWith(SignatureAlgorithm.HS256, "TjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8".getBytes())
+        .compact();
+  }
+
   @Override
   public Optional<String> verifyUser(VerifyGeoUserDTO geoUserDTO) throws GeoUserException {
     try {
@@ -56,15 +67,7 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
 
       if (geoUser.getPassword().equals(geoUserDTO.getPassword())) {
 
-        geoUser.setJwtToken("my token is good token");
-
-        geoUserRepository.save(geoUser);
-
-        geoUserRepository.flush();
-
-        logger.error(getJWTToken(geoUser));
-
-        return Optional.of(geoUser.getJwtToken());
+        return Optional.of(geoUser.getUsername());
       }
 
       return Optional.empty();
@@ -79,6 +82,7 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
     }
   }
 
+  @Override
   public Optional<String> setJwtToken(GeoUserDTO geoUserDTO) throws GeoUserException {
     try {
       GeoUser geoUser = getUser(geoUserDTO);
@@ -101,18 +105,14 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
     }
   }
 
-  public String getJWTToken(GeoUser geoUser) {
+  @Override
+  public void resetJwtToken(GeoUserDTO geoUserDTO) throws GeoUserException {
 
-    final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    final GeoUser geoUser = getUser(geoUserDTO);
 
-    return Jwts.builder()
-        .setIssuer("geo-chat")
-        .setSubject("jwt-token")
-        .claim("username", geoUser.getUsername())
-        .setIssuedAt(timestamp)
-        .setExpiration(new Date(timestamp.getTime() + Duration.ofDays(14).toMillis()))
-        .signWith(SignatureAlgorithm.HS256, "TjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8".getBytes())
-        .compact();
+    geoUser.setJwtToken(null);
+
+    geoUserRepository.save(geoUser);
   }
 
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // (1)

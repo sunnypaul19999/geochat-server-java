@@ -10,6 +10,7 @@ import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatExcepti
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
 import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +101,7 @@ public class GeoUserController {
       final Cookie cookie = new Cookie("geoChatJwtToken", jwtToken.get());
 
       cookie.setHttpOnly(true);
-      
+
       cookie.setPath("/");
 
       httpServletResponse.addCookie(cookie);
@@ -112,10 +113,29 @@ public class GeoUserController {
   }
 
   @GetMapping(value = "/logout")
-  public void geoChatLogout() {
+  public String geoChatLogout(HttpServletResponse httpServletResponse) {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    authentication.setAuthenticated(false);
+    try {
+
+      geoUserServiceImpl.resetJwtToken(new GeoUserDTO(authentication.getName()));
+
+      authentication.setAuthenticated(false);
+
+      httpServletResponse.setStatus(200);
+
+    } catch (GeoUserNotFoundException e) {
+
+      httpServletResponse.setStatus(404);
+
+    } catch (GeoUserException e) {
+
+      logger.error("error occurred while logging out", e);
+
+      httpServletResponse.setStatus(500);
+    }
+
+    return "logout";
   }
 }
