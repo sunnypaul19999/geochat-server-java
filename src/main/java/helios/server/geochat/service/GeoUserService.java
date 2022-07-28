@@ -7,15 +7,19 @@ import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceExceptio
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
 import helios.server.geochat.model.GeoUser;
 
+import java.util.Optional;
+
 public interface GeoUserService {
 
-    boolean verifyUser(VerifyGeoUserDTO geoUserDTO) throws GeoUserException;
+  Optional<String> verifyUser(VerifyGeoUserDTO geoUserDTO) throws GeoUserException;
 
-    GeoUser getUser(GeoUserDTO geoUserDTO) throws GeoUserNotFoundException;
+  GeoUser getUser(GeoUserDTO geoUserDTO) throws GeoUserNotFoundException;
 
-    void addUser(NewGeoUserDTO newGeoUserDTO) throws GeoUserException;
+  void addUser(NewGeoUserDTO newGeoUserDTO) throws GeoUserException;
 
-    void addUserAsAdmin(NewGeoUserDTO newGeoUserDTO) throws GeoUserException;
+  void addUserAsAdmin(NewGeoUserDTO newGeoUserDTO) throws GeoUserException;
 
-    void deleteUser(GeoUserDTO geoUserDTO) throws GeoUserException;
+  void deleteUser(GeoUserDTO geoUserDTO) throws GeoUserException;
+
+  Optional<String> setJwtToken(GeoUserDTO geoUserDTO) throws GeoUserException;
 }

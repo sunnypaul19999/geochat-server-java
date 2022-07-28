@@ -2,7 +2,6 @@ package helios.server.geochat;
 
 import helios.server.geochat.security.authentication.filter.JWTAuthFilter;
 import helios.server.geochat.security.authentication.provider.GeoSecurityBasicUserAuthenticationProvider;
-import helios.server.geochat.security.authentication.provider.JWTAuthenticationProvider;
 import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +88,8 @@ public class MainApplication {
 
     // adding JWTFilter
     http.addFilterAt(
-        new JWTAuthFilter(authenticationManager(authenticationConfiguration)),
+        new JWTAuthFilter(
+            authenticationManager(authenticationConfiguration), geoSecurityUserServiceImpl),
         UsernamePasswordAuthenticationFilter.class);
 
     http.authorizeRequests()

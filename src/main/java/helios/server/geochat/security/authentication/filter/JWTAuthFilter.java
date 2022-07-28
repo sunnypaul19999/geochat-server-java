@@ -1,6 +1,12 @@
 package helios.server.geochat.security.authentication.filter;
 
-import helios.server.geochat.security.authentication.JWTAuthentication;
+import helios.server.geochat.dto.request.GeoUserDTO;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
+import helios.server.geochat.model.GeoUser;
+import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,22 +15,28 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter {
 
   private final AuthenticationManager authenticationManager;
 
-  private Optional<String> authHeader;
+  private final GeoSecurityUserServiceImpl geoUserService;
 
-  private Logger logger = LoggerFactory.getLogger(getClass());
+  private Cookie jwtTokenCookie;
 
-  public JWTAuthFilter(AuthenticationManager authenticationManager) {
+  private final Logger logger = LoggerFactory.getLogger(getClass());
+
+  public JWTAuthFilter(
+      AuthenticationManager authenticationManager, GeoSecurityUserServiceImpl geoUserService) {
     this.authenticationManager = authenticationManager;
+    this.geoUserService = geoUserService;
   }
 
   @Override
@@ -32,27 +44,56 @@ public class JWTAuthFilter extends OncePerRequestFilter {
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    final String authorizationHeaderValue = authHeader.get().trim();
+    String jwtToken = jwtTokenCookie.getValue();
 
-    if (authorizationHeaderValue.startsWith("Bearer")) {
-      
-      response.setStatus(300);
+    JwtParser jwtParser =
+        Jwts.parserBuilder().setSigningKey("TjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8".getBytes()).build();
+
+    Claims jwtBody = jwtParser.parseClaimsJws(jwtToken).getBody();
+
+    logger.debug(String.format("--- Username : %s ", jwtBody));
+
+    if (jwtParser.isSigned(jwtToken)) {
+      final GeoUserDTO geoUserDTO = new GeoUserDTO((String) jwtBody.get("username"));
+      try {
+        final GeoUser geoUser = geoUserService.getUser(geoUserDTO);
+
+        if (geoUser.getJwtToken().equals(jwtToken)) {
+
+          response.setStatus(200);
+
+          return;
+        }
+      } catch (GeoUserNotFoundException e) {
+
+        response.setStatus(400);
+      }
+
+      response.setStatus(403);
     }
+
+    response.setStatus(403);
   }
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 
-    authHeader = Optional.ofNullable(request.getHeader("Authorization"));
+    if (request.getCookies() == null) return true;
 
-    if (authHeader.isPresent()) {
+    List<Cookie> cookies =
+        Arrays.stream(request.getCookies())
+            .filter(cookie -> cookie.getName().equalsIgnoreCase("GEOCHATJWTTOKEN"))
+            .toList();
 
-      if (authHeader.get().trim().startsWith("Bearer")) {
+    if (cookies.isEmpty()) {
 
-        return false;
-      }
+      return true;
+
+    } else {
+
+      jwtTokenCookie = cookies.get(0);
+
+      return false;
     }
-
-    return true;
   }
 }

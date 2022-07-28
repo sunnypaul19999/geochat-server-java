@@ -1,30 +1,28 @@
 package helios.server.geochat.controller;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
-import helios.server.geochat.dto.response.globalresponse.InvalidRequestFormatGlobalResponse;
-import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.SecurityContext;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
-import org.springframework.web.bind.annotation.*;
-
+import helios.server.geochat.dto.request.GeoUserDTO;
 import helios.server.geochat.dto.request.NewGeoUserDTO;
+import helios.server.geochat.dto.request.VerifyGeoUserDTO;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterFailureResponse;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterSuccessResponse;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOResponse;
+import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserExistsException;
 import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -89,10 +87,31 @@ public class GeoUserController {
   }
 
   @GetMapping(value = "/login")
-  public void geoChatLogin() {}
+  public VerifyGeoUserDTO geoChatLogin(HttpServletResponse httpServletResponse)
+      throws GeoUserException {
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    Optional<String> jwtToken =
+        geoUserServiceImpl.setJwtToken(new GeoUserDTO(authentication.getName()));
+
+    if (jwtToken.isPresent()) {
+
+      final Cookie cookie = new Cookie("geoChatJwtToken", jwtToken.get());
+
+      cookie.setHttpOnly(true);
+
+      httpServletResponse.addCookie(cookie);
+
+      return new VerifyGeoUserDTO(authentication.getName(), jwtToken.get());
+    }
+
+    return new VerifyGeoUserDTO(authentication.getName(), (String) authentication.getCredentials());
+  }
 
   @GetMapping(value = "/logout")
   public void geoChatLogout() {
+
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     authentication.setAuthenticated(false);

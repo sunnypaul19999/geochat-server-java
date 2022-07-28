@@ -4,6 +4,8 @@ import javax.persistence.*;
 
 import helios.server.geochat.dto.request.NewGeoUserDTO;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -21,6 +23,9 @@ public class GeoUser {
 
   @Column(name = "password", length = 256, nullable = false)
   private String password;
+
+  @Column(name = "jwt_token")
+  private String jwtToken;
 
   //  select geouser_assumable_role.role_id, geouser_assumable_role.role_type
   //  from geouserrole //joint table
@@ -84,5 +89,15 @@ public class GeoUser {
 
   public void setSubTopicMetaDiscussion(List<SubTopicMetaDiscussion> subTopicMetaDiscussion) {
     this.subTopicMetaDiscussion = subTopicMetaDiscussion;
+  }
+
+  public String getJwtToken() {
+
+    return jwtToken;
+  }
+
+  public void setJwtToken(String jwtToken) {
+
+    this.jwtToken = jwtToken;
   }
 }
