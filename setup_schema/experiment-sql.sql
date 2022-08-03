@@ -4,11 +4,11 @@ select * from geopoint;
 
 select * from geouser;
 
+show tables;
+
 select * from geouserrole;
 
 select * from geouser_assumable_role;
-
-
 
 select * from geopointrange;
 
