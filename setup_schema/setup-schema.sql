@@ -3,7 +3,9 @@ drop database if exists geochatserver;
 
 create database if not exists geochatserver;
 
-use geochatserver;
+use geochatservertest;
+
+use geochatserver; 
 
 create table if not exists geouser(
 user_id int auto_increment,
