@@ -1,8 +1,8 @@
 use geochatserver;
 
-select * from geopoint;
-
 select * from geouser;
+
+select * from geopoint;
 
 show tables;
 
