@@ -93,12 +93,12 @@ public class MainApplication {
         UsernamePasswordAuthenticationFilter.class);
 
     http.authorizeRequests()
-        .antMatchers("/user/register")
-        .permitAll()
-        .antMatchers("/user/login")
-        .authenticated()
         .antMatchers("/geopoint/**/delete/{id}")
         .hasAuthority("USER")
+        .antMatchers("/user/login")
+        .authenticated()
+        .mvcMatchers("/user/register")
+        .permitAll()
         .anyRequest()
         .authenticated();
 

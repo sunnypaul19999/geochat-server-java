@@ -6,6 +6,7 @@ import helios.server.geochat.dto.request.VerifyGeoUserDTO;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterFailureResponse;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOOnRegiseterSuccessResponse;
 import helios.server.geochat.dto.response.geoUserResponse.GeoUserDTOResponse;
+import helios.server.geochat.dto.response.globalresponse.InvalidRequestFormatGlobalResponse;
 import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
@@ -15,9 +16,12 @@ import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -54,7 +58,7 @@ public class GeoUserController {
 
     } catch (GeoUserConfirmPasswordMismatchException e) {
       logger.info(
-          "Password and Confirm Password mismatch occured while registering",
+          "Password and Confirm Password mismatch occurred while registering",
           newGeoUserDTO.toString());
 
       GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse =
@@ -137,5 +141,29 @@ public class GeoUserController {
     }
 
     return "logout";
+  }
+  
+  @ExceptionHandler(value = GeoUserNotFoundException.class)
+  public GeoUserDTOResponse handlerGeoUserNotFoundException(HttpServletResponse httpServletResponse,GeoUserNotFoundException e){
+    
+    httpServletResponse.setStatus(404);
+
+    var dtoResponse = new GeoUserDTOResponse(false);
+    
+    dtoResponse.setMessage("user not found");
+    
+    return dtoResponse;
+  }
+  
+  @ExceptionHandler(value = InvalidRequestFormatException.class)
+  @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+  public InvalidRequestFormatGlobalResponse invalidDataRequest(Exception e) {
+    
+    logger.error("Rejecting DTO. Has binding errors.");
+    
+    InvalidRequestFormatGlobalResponse invalidRequestFormatGlobalResponse =
+            new InvalidRequestFormatGlobalResponse();
+    
+    return invalidRequestFormatGlobalResponse;
   }
 }

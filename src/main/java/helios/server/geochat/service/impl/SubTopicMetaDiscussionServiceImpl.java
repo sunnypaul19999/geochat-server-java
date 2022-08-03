@@ -101,7 +101,7 @@ public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussion
         subTopicMetaDiscussionRepository.findByTopicTopicIdAndSubTopicId(
             topicId,
             subTopicDTO.getSubTopicId(),
-            PageRequest.of(pageNumber - 1, 5, Sort.by(Sort.Order.asc("id"))));
+            PageRequest.of(pageNumber - 1, 5, Sort.by(Sort.Order.desc("id"))));
 
     return subTopicMetaDiscussionPaged
         .map(
