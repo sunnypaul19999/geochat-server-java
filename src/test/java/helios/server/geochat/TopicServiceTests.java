@@ -1,44 +1,60 @@
 package helios.server.geochat;
 
 import helios.server.geochat.dto.request.TopicDTO;
+import helios.server.geochat.dto.request.UserLocationDTO;
+import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
 import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointNotRegisteredException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
-import helios.server.geochat.repository.GeoPointRangeRepository;
-import helios.server.geochat.repository.GeoPointRepository;
-import helios.server.geochat.repository.TopicRepository;
-import helios.server.geochat.service.impl.GeoPointRangeServiceImpl;
-import helios.server.geochat.service.impl.GeoPointServiceImpl;
-import helios.server.geochat.service.impl.TopicServiceImpl;
+import helios.server.geochat.service.GeoPointService;
+import helios.server.geochat.service.TopicService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.util.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class TopicServiceTests {
-  
-  @MockBean
-  private TopicServiceImpl topicService;
+  @Autowired public TopicService topicService;
 
-  private int topicId;
+  @Autowired public GeoPointService geoPointService;
+
+  @BeforeEach
+  void assertIfTopicServiceIsNull() {}
 
   @Test
-  void addTopicWithExistentGeoPoint() throws TopicException {
+  void contextLoads() {
 
+    // Assert.notNull(topicService, "TopicService is null cannot proceed");
+  }
+//
+//  @Test
+//  void addGeoPoint() throws GeoPointException {
+//    geoPointService.registerGeoPoint(new UserLocationDTO(23.677303229900822, 86.94993375397198));
+//  }
+
+  @Test
+  void addTopicWithExistentGeoPoint() throws TopicException, GeoPointNotRegisteredException {
     var topicDto = new TopicDTO("test title");
 
     topicDto.setPlusCode("7MM8MWGX+WX");
 
-    try {
-      topicService.addTopic(topicDto);
-    } catch (GeoPointNotRegisteredException e) {
+    topicService.addTopic(topicDto);
+  }
 
-      Assert.isTrue(true, e.getMessage());
-    }
+  @Test
+  void addTopicWithNonExistentGeoPoint() {
+
+    var topicDto = new TopicDTO("test title");
+
+    // setting non existent plus code
+    topicDto.setPlusCode("9NM8MWGX+WX");
+
+    Assertions.assertThrows(
+        GeoPointNotRegisteredException.class,
+        () -> {
+          topicService.addTopic(topicDto);
+        },
+        "Expected to throw GeoPointNotRegisteredException for plus-code 9NM8MWGX+WX");
   }
 }

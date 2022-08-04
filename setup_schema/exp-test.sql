@@ -1,4 +1,4 @@
-use geochatserver;
+use geochatservertest;
 
 select * from geouser;
 
