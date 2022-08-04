@@ -1,12 +1,10 @@
 package helios.server.geochat.dto.request;
 
-import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(value = "id", allowGetters = true, ignoreUnknown = true)
 public class TopicDTO {
@@ -23,6 +21,10 @@ public class TopicDTO {
   private String topicTitle;
 
   public TopicDTO(@NotNull @Length(min = 80, max = 250) String title) {
+    this.topicTitle = title;
+  }
+
+  public TopicDTO(@NotNull int id, @NotNull @Length(min = 80, max = 250) String title) {
     this.topicTitle = title;
   }
 
