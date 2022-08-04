@@ -21,8 +21,6 @@ public class GeoPointServiceImpl implements GeoPointService {
 
   @Autowired GeoPointRepository geoPointRepository;
 
-  @Autowired GeoPointRangeRepository geoPointRangeRepository;
-
   @Autowired GeoPointRangeServiceImpl geoPointRangeServiceImpl;
 
   @Override

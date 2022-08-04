@@ -34,10 +34,16 @@ public class TopicServiceImpl implements TopicService {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
-  @Autowired GeoPointService geoPointService;
-
-  @Autowired TopicRepository topicRepository;
-
+  private GeoPointService geoPointService;
+  
+  private TopicRepository topicRepository;
+  
+  public TopicServiceImpl(GeoPointService geoPointService, TopicRepository topicRepository) {
+    
+    this.geoPointService = geoPointService;
+    this.topicRepository = topicRepository;
+  }
+  
   @Override
   public Topic getTopicEntityById(int topicId) throws TopicException {
 
