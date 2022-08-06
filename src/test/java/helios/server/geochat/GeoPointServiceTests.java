@@ -52,7 +52,7 @@ public class GeoPointServiceTests {
   @Order(3)
   public void testGeoPointExists() {
 
-    String expectedPlusCode = geoPointService.calcPlusCode(newUserLocationDTO);
+    String expectedPlusCode = GeoPointService.calcPlusCode(newUserLocationDTO);
 
     String registeredPlusCode = geoPointService.isGeoPointRegistered(newUserLocationDTO);
 

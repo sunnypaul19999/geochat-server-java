@@ -2,6 +2,7 @@ package helios.server.geochat;
 
 import helios.server.geochat.dto.request.SubTopicDTO;
 import helios.server.geochat.dto.request.TopicDTO;
+import helios.server.geochat.dto.request.UserLocationDTO;
 import helios.server.geochat.service.GeoPointService;
 import helios.server.geochat.service.SubTopicService;
 import helios.server.geochat.service.TopicService;
@@ -13,57 +14,62 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class SubTopicServiceTest {
 
-  private SubTopicService subTopicService;
+  private final SubTopicService subTopicService;
 
-  private TopicService topicService;
-  
-  private  GeoPointService geoPointService;
+  private final TopicService topicService;
+
+  private final GeoPointService geoPointService;
 
   @Autowired
-  public SubTopicServiceTest(SubTopicService subTopicService, TopicService topicService, GeoPointService geoPointService) {
+  public SubTopicServiceTest(
+      SubTopicService subTopicService, TopicService topicService, GeoPointService geoPointService) {
 
     this.subTopicService = subTopicService;
 
     this.topicService = topicService;
-    
+
     this.geoPointService = geoPointService;
   }
 
   @Test
-  public int addSubTopic() {
+  public void testAddSubTopic() {
 
-        final int[] subTopicId = new int[1];
-        final int[] topicId = new int[1];
+    final int[] subTopicId = new int[1];
+    final int[] topicId = new int[1];
 
-        Assertions.assertDoesNotThrow(
-            () -> {
-              
-              TopicService.
-              
-              TopicDTO topicDTO = new TopicDTO();
-              topicDTO.setTopicTitle("Test for adding sub-topic");
-              topicDTO.setPlusCode(GeoPointService.);
-              topicId[0] = topicService.addTopic(new TopicDTO());
-            });
+    Assertions.assertDoesNotThrow(
+        () -> {
+          String plusCode =
+              geoPointService.registerGeoPoint(
+                  new UserLocationDTO(23.677303229900822, 86.94993375397198));
 
-        SubTopicDTO subTopicDTO = new SubTopicDTO();
+          TopicDTO topicDTO = new TopicDTO(plusCode);
 
-        subTopicDTO.setTopicId(topicId[0]);
+          topicDTO.setTopicTitle("Test for adding sub-topic");
 
-        subTopicDTO.setSubTopicTitle(
-            String.format(
-                "test sub-topic title topic-id: %d timestamp: %d",
-                topicId, System.currentTimeMillis()));
+          topicDTO.setPlusCode(plusCode);
 
-        subTopicDTO.setSubTopicDescription("This test description");
+          topicId[0] = topicService.addTopic(topicDTO).getId();
+        },
+        "Failed to create topic");
 
-        Assertions.assertDoesNotThrow(
-            () -> {
-              subTopicId[0] = subTopicService.addSubTopic(subTopicDTO).getSubTopicId();
-            });
+    SubTopicDTO subTopicDTO = new SubTopicDTO();
 
-        return subTopicId[0];
+    subTopicDTO.setTopicId(topicId[0]);
 
-    return 0;
+    subTopicDTO.setSubTopicTitle(
+        String.format(
+            "test sub-topic title topic-id: %d timestamp: %d",
+            topicId[0], System.currentTimeMillis()));
+
+    subTopicDTO.setSubTopicDescription("This test description");
+
+    Assertions.assertDoesNotThrow(
+        () -> {
+          subTopicId[0] = subTopicService.addSubTopic(subTopicDTO).getSubTopicId();
+        },
+        "Failed to create SubTopic");
+
+    //    return subTopicId[0];
   }
 }

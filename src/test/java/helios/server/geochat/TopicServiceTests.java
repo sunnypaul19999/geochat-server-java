@@ -9,7 +9,6 @@ import helios.server.geochat.service.TopicService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Component;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -17,7 +16,7 @@ public class TopicServiceTests {
 
   public TopicService topicService;
 
-  private GeoPointService geoPointService;
+  private final GeoPointService geoPointService;
 
   @Autowired
   public TopicServiceTests(TopicService topicService, GeoPointService geoPointService) {
@@ -69,7 +68,7 @@ public class TopicServiceTests {
     topicService.updateTopic(updateTopicDTO);
 
     final String updatedTitle = topicService.getTopicById(topicId).getTopicTitle();
-    
+
     System.out.println(updatedTitle.equals(updateTopicTitle));
 
     Assertions.assertTrue(
