@@ -3,6 +3,10 @@ package helios.server.geochat;
 import helios.server.geochat.dto.request.SubTopicDTO;
 import helios.server.geochat.dto.request.TopicDTO;
 import helios.server.geochat.dto.request.UserLocationDTO;
+import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
+import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicException;
+import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.service.GeoPointService;
 import helios.server.geochat.service.SubTopicService;
 import helios.server.geochat.service.TopicService;
@@ -31,45 +35,97 @@ public class SubTopicServiceTest {
     this.geoPointService = geoPointService;
   }
 
-  @Test
-  public void testAddSubTopic() {
+  String registerPlusCode() throws GeoPointException {
 
-    final int[] subTopicId = new int[1];
-    final int[] topicId = new int[1];
+    return geoPointService.registerGeoPoint(
+        new UserLocationDTO(23.677303229900822, 86.94993375397198));
+  }
 
-    Assertions.assertDoesNotThrow(
-        () -> {
-          String plusCode =
-              geoPointService.registerGeoPoint(
-                  new UserLocationDTO(23.677303229900822, 86.94993375397198));
+  TopicDTO addTopic() throws GeoPointException, TopicException {
+    final String plusCode = registerPlusCode();
 
-          TopicDTO topicDTO = new TopicDTO(plusCode);
+    TopicDTO topicDTO = new TopicDTO(plusCode);
 
-          topicDTO.setTopicTitle("Test for adding sub-topic");
+    topicDTO.setTopicTitle(
+        String.format("Test topic for adding sub-topic timestamp: %d", System.currentTimeMillis()));
 
-          topicDTO.setPlusCode(plusCode);
+    topicDTO.setPlusCode(plusCode);
 
-          topicId[0] = topicService.addTopic(topicDTO).getId();
-        },
-        "Failed to create topic");
+    return topicService.addTopic(topicDTO);
+  }
+
+  SubTopicDTO addSubTopic(int topicId) throws SubTopicException, TopicException {
 
     SubTopicDTO subTopicDTO = new SubTopicDTO();
 
-    subTopicDTO.setTopicId(topicId[0]);
+    subTopicDTO.setTopicId(topicId);
 
     subTopicDTO.setSubTopicTitle(
         String.format(
             "test sub-topic title topic-id: %d timestamp: %d",
-            topicId[0], System.currentTimeMillis()));
+            topicId, System.currentTimeMillis()));
 
     subTopicDTO.setSubTopicDescription("This test description");
 
+    return subTopicService.addSubTopic(subTopicDTO);
+  }
+
+  @Test
+  public void testAddSubTopic() throws TopicException, GeoPointException {
+
+    TopicDTO newTopic = addTopic();
+
     Assertions.assertDoesNotThrow(
         () -> {
-          subTopicId[0] = subTopicService.addSubTopic(subTopicDTO).getSubTopicId();
+          final SubTopicDTO newSubTopic = addSubTopic(newTopic.getId());
+
+          subTopicService.getSubTopic(newTopic.getId(), newSubTopic.getSubTopicId());
         },
         "Failed to create SubTopic");
+  }
 
-    //    return subTopicId[0];
+  @Test
+  public void testUpdateSubTopic() throws SubTopicException, TopicException, GeoPointException {
+
+    final TopicDTO newTopic = addTopic();
+
+    final SubTopicDTO newSubTopic = addSubTopic(newTopic.getId());
+
+    SubTopicDTO updateSubTopic =
+        subTopicService.getSubTopic(newTopic.getId(), newSubTopic.getSubTopicId());
+
+    updateSubTopic.setSubTopicTitle(
+        String.format("updated sub-topic-tile %d", System.currentTimeMillis()));
+
+    Assertions.assertDoesNotThrow(
+        () -> {
+          subTopicService.updateSubTopic(updateSubTopic);
+        },
+        "Failed to update sub-topic");
+
+    Assertions.assertTrue(
+        subTopicService
+            .getSubTopic(newTopic.getId(), newSubTopic.getSubTopicId())
+            .getSubTopicTitle()
+            .equals(updateSubTopic.getSubTopicTitle()));
+  }
+
+  @Test
+  public void testDeleteSubTopic() throws TopicException, GeoPointException, SubTopicException {
+
+    final TopicDTO newTopic = addTopic();
+
+    final SubTopicDTO newSubTopic = addSubTopic(newTopic.getId());
+
+    Assertions.assertDoesNotThrow(
+        () -> {
+          subTopicService.deleteSubTopic(newTopic.getId(), newSubTopic.getSubTopicId());
+        });
+
+    Assertions.assertThrows(
+        SubTopicNotFoundException.class,
+        () -> {
+          subTopicService.getSubTopic(newTopic.getId(), newSubTopic.getSubTopicId());
+        });
   }
 }

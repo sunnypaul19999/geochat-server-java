@@ -1,13 +1,15 @@
 package helios.server.geochat.service.impl;
 
-import java.util.List;
-import java.util.Optional;
-
+import helios.server.geochat.dto.request.SubTopicDTO;
+import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicException;
+import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicPageNumberNotInRangeException;
-
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
+import helios.server.geochat.model.SubTopic;
 import helios.server.geochat.model.Topic;
+import helios.server.geochat.repository.SubTopicRepository;
+import helios.server.geochat.service.SubTopicService;
 import helios.server.geochat.service.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import helios.server.geochat.service.SubTopicService;
-
-import helios.server.geochat.model.SubTopic;
-import helios.server.geochat.repository.SubTopicRepository;
-import helios.server.geochat.dto.request.SubTopicDTO;
-
-import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicException;
-import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubTopicServiceImpl implements SubTopicService {
@@ -56,7 +52,10 @@ public class SubTopicServiceImpl implements SubTopicService {
     if (subTopic.isPresent()) {
 
       return new SubTopicDTO(
-          subTopic.get().getId(), subTopic.get().getTitle(), subTopic.get().getDescription());
+          topicId,
+          subTopic.get().getId(),
+          subTopic.get().getTitle(),
+          subTopic.get().getDescription());
     }
 
     throw new SubTopicNotFoundException(subTopicId, "GET_SUBTOPIC_BY_ID");
