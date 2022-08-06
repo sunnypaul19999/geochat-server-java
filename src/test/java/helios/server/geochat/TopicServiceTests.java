@@ -1,22 +1,23 @@
 package helios.server.geochat;
 
 import helios.server.geochat.dto.request.TopicDTO;
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointNotRegisteredException;
+import helios.server.geochat.dto.request.UserLocationDTO;
+import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 import helios.server.geochat.service.GeoPointService;
 import helios.server.geochat.service.TopicService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TopicServiceTests {
 
-  public TopicService topicService;
-
   private final GeoPointService geoPointService;
+
+  public TopicService topicService;
 
   @Autowired
   public TopicServiceTests(TopicService topicService, GeoPointService geoPointService) {
@@ -25,75 +26,63 @@ public class TopicServiceTests {
     this.geoPointService = geoPointService;
   }
 
+  String registerPlusCode() throws GeoPointException {
+
+    return geoPointService.registerGeoPoint(
+        new UserLocationDTO(23.677303229900822, 86.94993375397198));
+  }
+
+  TopicDTO addTopic() throws GeoPointException, TopicException {
+    final String plusCode = registerPlusCode();
+
+    TopicDTO topicDTO = new TopicDTO(plusCode);
+
+    topicDTO.setTopicTitle(
+        String.format("Test topic for adding sub-topic timestamp: %d", System.currentTimeMillis()));
+
+    topicDTO.setPlusCode(plusCode);
+
+    return topicService.addTopic(topicDTO);
+  }
+
   @Test
-  @Order(1)
-  void addTopicWithNonExistentGeoPoint() {
+  void testAddTopic() {
 
-    var topicDto = new TopicDTO("test title");
-
-    // setting non existent plus code
-    topicDto.setPlusCode("9NM8MWGX+WX");
-
-    Assertions.assertThrows(
-        GeoPointNotRegisteredException.class,
+    Assertions.assertDoesNotThrow(
         () -> {
-          topicService.addTopic(topicDto);
-        },
-        "Expected to throw GeoPointNotRegisteredException for plus-code 9NM8MWGX+WX");
+          addTopic();
+        });
   }
 
   @Test
-  @Order(2)
-  public int addTopicWithExistentGeoPoint() throws TopicException, GeoPointNotRegisteredException {
-    var topicDto = new TopicDTO("test title");
+  void testUpdateTopic() throws TopicException, GeoPointException {
+    final TopicDTO newTopic = addTopic();
 
-    topicDto.setPlusCode("7MM8MWGX+WX");
+    newTopic.setTopicTitle(
+        String.format("updated topic title timestamp: %d", System.currentTimeMillis()));
 
-    return topicService.addTopic(topicDto).getId();
-  }
-
-  @Test
-  @Order(3)
-  void updateTopicWithExistentTopicId() throws TopicException, GeoPointNotRegisteredException {
-
-    final String updateTopicTitle =
-        String.format("updated topic title %d", System.currentTimeMillis());
-
-    final int topicId = addTopicWithExistentGeoPoint();
-
-    TopicDTO updateTopicDTO = new TopicDTO(topicId, updateTopicTitle);
-
-    updateTopicDTO.setId(topicId);
-
-    topicService.updateTopic(updateTopicDTO);
-
-    final String updatedTitle = topicService.getTopicById(topicId).getTopicTitle();
-
-    System.out.println(updatedTitle.equals(updateTopicTitle));
+    Assertions.assertDoesNotThrow(
+        () -> {
+          topicService.updateTopic(newTopic);
+        });
 
     Assertions.assertTrue(
-        updatedTitle.equals(updateTopicTitle),
-        String.format("%s %s", updatedTitle, updateTopicTitle));
+        newTopic
+            .getTopicTitle()
+            .equals(topicService.getTopicById(newTopic.getId()).getTopicTitle()),
+        "Update topic title does not match");
   }
 
   @Test
-  @Order(4)
-  void deleteTopicWithExistentTopicId() throws TopicException, GeoPointNotRegisteredException {
-
-    final int topicId = addTopicWithExistentGeoPoint();
-
-    topicService.deleteTopic(topicId);
-  }
-
-  @Test
-  @Order(5)
-  void deleteTopicWithNonExistentTopicId() {
+  void testDeleteTopic() throws TopicException, GeoPointException {
+    final TopicDTO newTopic = addTopic();
 
     Assertions.assertThrows(
         TopicNotFoundException.class,
         () -> {
-          topicService.deleteTopic(0);
-        },
-        String.format("Topic with topic id %d does not exists could not deleted", 0));
+          topicService.deleteTopic(newTopic.getId());
+
+          topicService.getTopicById(newTopic.getId());
+        });
   }
 }
