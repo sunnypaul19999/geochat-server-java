@@ -14,9 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GeoPointServiceTests {
 
-  private GeoPointService geoPointService;
+  private final GeoPointService geoPointService;
 
-  private UserLocationDTO newUserLocationDTO;
+  private final UserLocationDTO newUserLocationDTO;
 
   private String newPlusCode;
 

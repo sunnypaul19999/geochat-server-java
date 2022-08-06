@@ -17,7 +17,7 @@ public class TopicServiceTests {
 
   private final GeoPointService geoPointService;
 
-  public TopicService topicService;
+  public final TopicService topicService;
 
   @Autowired
   public TopicServiceTests(TopicService topicService, GeoPointService geoPointService) {
