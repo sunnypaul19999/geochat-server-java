@@ -1,11 +1,11 @@
 package helios.server.geochat.dto.request;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SubTopicMetaDiscussionDTO {
@@ -26,6 +26,8 @@ public class SubTopicMetaDiscussionDTO {
   @Length(max = 250)
   @JsonProperty(access = JsonProperty.Access.READ_WRITE)
   private String message;
+
+  public SubTopicMetaDiscussionDTO() {}
 
   public SubTopicMetaDiscussionDTO(
       int topicId, int subTopicId, int messageId, String senderUsername, String message) {
