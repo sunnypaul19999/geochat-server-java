@@ -1,7 +1,6 @@
 package helios.server.geochat.service;
 
 import com.google.openlocationcode.OpenLocationCode;
-
 import helios.server.geochat.dto.request.UserLocationDTO;
 import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointDefaultRangeNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
@@ -10,23 +9,14 @@ import helios.server.geochat.model.GeoPoint;
 
 public interface GeoPointService {
 
-  /*
-  @returns plusCode is present and empty string if geopoint not registered
-   */
-  String isGeoPointRegistered(UserLocationDTO userLocationDTO);
-
-  GeoPoint isGeoPointRegistered(String plusCode) throws GeoPointNotRegisteredException;
-
-  default String calcPlusCode(UserLocationDTO userLocationDTO) {
+  static String calcPlusCode(UserLocationDTO userLocationDTO) {
     OpenLocationCode openLocationCode =
         new OpenLocationCode(userLocationDTO.getLat(), userLocationDTO.getLon());
 
     return openLocationCode.getCode();
   }
 
-  String registerGeoPoint(UserLocationDTO userLocationDTO) throws GeoPointException;
-
-  public static double calDistanceGeoPoints(double lat1, double lon1, double lat2, double lon2) {
+  static double calDistanceGeoPoints(double lat1, double lon1, double lat2, double lon2) {
     if ((lat1 == lat2) && (lon1 == lon2)) {
       return 0;
     } else {
@@ -46,6 +36,15 @@ public interface GeoPointService {
       return dist;
     }
   }
+
+  /*
+  @returns plusCode is present and empty string if geopoint not registered
+   */
+  String isGeoPointRegistered(UserLocationDTO userLocationDTO);
+
+  GeoPoint isGeoPointRegistered(String plusCode) throws GeoPointNotRegisteredException;
+
+  String registerGeoPoint(UserLocationDTO userLocationDTO) throws GeoPointException;
 
   public String checkIfInRangeWithOtherGeoPoint(UserLocationDTO userLocationDTO)
       throws GeoPointDefaultRangeNotFoundException;

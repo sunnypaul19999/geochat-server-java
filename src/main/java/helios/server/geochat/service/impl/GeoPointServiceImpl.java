@@ -39,7 +39,7 @@ public class GeoPointServiceImpl implements GeoPointService {
   public String isGeoPointRegistered(UserLocationDTO userLocationDTO) {
     String plusCode = "";
 
-    Optional<GeoPoint> geoPoint = geoPointRepository.findById(calcPlusCode(userLocationDTO));
+    Optional<GeoPoint> geoPoint = geoPointRepository.findById(GeoPointService.calcPlusCode(userLocationDTO));
 
     if (geoPoint.isPresent()) {
       plusCode = geoPoint.get().getPlusCode();
@@ -63,7 +63,7 @@ public class GeoPointServiceImpl implements GeoPointService {
 
         // if no geopoint in range exits creates one for the location
         if (plusCode.isEmpty()) {
-          GeoPoint geoPoint = new GeoPoint(calcPlusCode(userLocationDTO), userLocationDTO);
+          GeoPoint geoPoint = new GeoPoint(GeoPointService.calcPlusCode(userLocationDTO), userLocationDTO);
 
           geoPoint = geoPointRepository.save(geoPoint);
 

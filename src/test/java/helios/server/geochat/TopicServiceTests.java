@@ -9,6 +9,7 @@ import helios.server.geochat.service.TopicService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.stereotype.Component;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -44,7 +45,7 @@ public class TopicServiceTests {
 
   @Test
   @Order(2)
-  int addTopicWithExistentGeoPoint() throws TopicException, GeoPointNotRegisteredException {
+  public int addTopicWithExistentGeoPoint() throws TopicException, GeoPointNotRegisteredException {
     var topicDto = new TopicDTO("test title");
 
     topicDto.setPlusCode("7MM8MWGX+WX");

@@ -30,7 +30,7 @@ public class SubTopicDTO {
   private String subTopicDescription;
 
   public SubTopicDTO() {}
-
+  
 
   public SubTopicDTO(int subTopicId, String subTopicTitle, String subTopicDescription) {
     this.subTopicId = subTopicId;
