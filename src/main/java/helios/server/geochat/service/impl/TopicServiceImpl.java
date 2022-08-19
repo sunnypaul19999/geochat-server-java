@@ -1,42 +1,33 @@
 package helios.server.geochat.service.impl;
 
-import java.util.List;
-import java.util.Optional;
-
+import helios.server.geochat.dto.request.TopicDTO;
 import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointNotRegisteredException;
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
+import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicPageNumberNotInRangeException;
 import helios.server.geochat.model.GeoPoint;
-import helios.server.geochat.repository.GeoPointRepository;
+import helios.server.geochat.model.Topic;
+import helios.server.geochat.repository.TopicRepository;
 import helios.server.geochat.service.GeoPointService;
+import helios.server.geochat.service.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import helios.server.geochat.model.Topic;
-
-import helios.server.geochat.repository.TopicRepository;
-
-import helios.server.geochat.service.TopicService;
-
-import helios.server.geochat.dto.request.TopicDTO;
-
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
-
-import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TopicServiceImpl implements TopicService {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
-  private GeoPointService geoPointService;
+  private final GeoPointService geoPointService;
 
-  private TopicRepository topicRepository;
+  private final TopicRepository topicRepository;
 
   public TopicServiceImpl(GeoPointService geoPointService, TopicRepository topicRepository) {
 
@@ -137,7 +128,7 @@ public class TopicServiceImpl implements TopicService {
   }
 
   @Override
-  public void updateTopic(TopicDTO topicDTO) throws TopicException {
+  public TopicDTO updateTopic(TopicDTO topicDTO) throws TopicException {
 
     try {
 
@@ -145,7 +136,12 @@ public class TopicServiceImpl implements TopicService {
 
       topic.setTopicTitle(topicDTO.getTopicTitle());
 
-      topicRepository.save(topic);
+      Topic updatedTopic = topicRepository.save(topic);
+
+      return new TopicDTO(
+          updatedTopic.getGeoPoint().getPlusCode(),
+          updatedTopic.getTopicId(),
+          updatedTopic.getTopicTitle());
 
     } catch (TopicNotFoundException e) {
 
@@ -153,10 +149,9 @@ public class TopicServiceImpl implements TopicService {
 
     } catch (TopicException e) {
 
-      logger.error(String.format("UPDATE_TOPIC %s", topicDTO.toString()), e);
+      logger.error(String.format("UPDATE_TOPIC %s", topicDTO), e);
 
-      throw new TopicException(
-          String.format("UPDATE_TOPIC %s", topicDTO.toString()), e.getMessage());
+      throw new TopicException(String.format("UPDATE_TOPIC %s", topicDTO), e.getMessage());
     }
   }
 

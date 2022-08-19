@@ -2,16 +2,12 @@ package helios.server.geochat.servicetest;
 
 import helios.server.geochat.dto.request.TopicDTO;
 import helios.server.geochat.dto.request.UserLocationDTO;
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.model.GeoPoint;
 import helios.server.geochat.model.Topic;
 import helios.server.geochat.repository.TopicRepository;
 import helios.server.geochat.service.GeoPointService;
-import helios.server.geochat.service.TopicService;
 import helios.server.geochat.service.impl.GeoPointServiceImpl;
 import helios.server.geochat.service.impl.TopicServiceImpl;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +27,7 @@ public class TopicServiceTest {
   @Mock TopicRepository topicRepository;
 
   @InjectMocks TopicServiceImpl topicService;
-  
+
   TopicDTO topicDTO;
 
   Topic topicEntity;
@@ -52,40 +48,64 @@ public class TopicServiceTest {
   }
 
   @Test
-  public void addTopicTest() throws GeoPointException, TopicException {
+  public void addTopicTest() {
 
-    Mockito.lenient()
-        .when(geoPointService.isGeoPointRegistered(Mockito.mock(TopicDTO.class).getPlusCode()))
-        .thenReturn(geoPointEntity);
+    Assertions.assertDoesNotThrow(
+        () -> {
+          Mockito.lenient()
+              .when(
+                  geoPointService.isGeoPointRegistered(Mockito.mock(TopicDTO.class).getPlusCode()))
+              .thenReturn(geoPointEntity);
 
-    Mockito.lenient().when(topicRepository.save(Mockito.any(Topic.class))).thenReturn(topicEntity);
+          Mockito.lenient()
+              .when(topicRepository.save(Mockito.any(Topic.class)))
+              .thenReturn(topicEntity);
 
-    TopicDTO addedTopicDTO = topicService.addTopic(topicDTO);
+          TopicDTO addedTopicDTO = topicService.addTopic(topicDTO);
 
-    Assertions.assertTrue(
-        addedTopicDTO.getId() == topicDTO.getId()
-            && addedTopicDTO.getTopicTitle().equals(topicDTO.getTopicTitle()));
+          Assertions.assertTrue(
+              addedTopicDTO.getId() == topicDTO.getId()
+                  && addedTopicDTO.getTopicTitle().equals(topicDTO.getTopicTitle()));
+        });
   }
 
   @Test
-  void updateTopicTest() throws TopicException {
+  void updateTopicTest() {
 
-    Mockito.when(topicRepository.findById(topicDTO.getId())).thenReturn(Optional.of(topicEntity));
+    Assertions.assertDoesNotThrow(
+        () -> {
+          Mockito.when(topicRepository.findById(topicDTO.getId()))
+              .thenReturn(Optional.of(topicEntity));
 
-    Mockito.when(topicRepository.save(topicEntity)).thenReturn(topicEntity);
+          Mockito.when(topicRepository.save(topicEntity)).thenReturn(topicEntity);
 
-    topicService.updateTopic(topicDTO);
+          TopicDTO updatedTopicDTO = topicService.updateTopic(topicDTO);
+
+          Assertions.assertTrue(
+              () -> {
+                if (updatedTopicDTO.getId() == topicEntity.getTopicId()
+                    && updatedTopicDTO.getTopicTitle().equals(topicEntity.getTopicTitle())) {
+
+                  return true;
+                }
+
+                return false;
+              });
+        });
   }
 
   @Test
-  void deleteTopic() throws TopicException {
+  void deleteTopic() {
 
     Mockito.when(topicRepository.findById(topicDTO.getId())).thenReturn(Optional.of(topicEntity));
 
     Mockito.doNothing().when(topicRepository).delete(topicEntity);
 
-    TopicDTO deletedTopicDTO = topicService.deleteTopic(topicDTO.getId());
+    Assertions.assertDoesNotThrow(
+        () -> {
+          TopicDTO deletedTopicDTO = topicService.deleteTopic(topicDTO.getId());
 
-    Assertions.assertTrue(deletedTopicDTO.getId() == topicDTO.getId());
+          Assertions.assertTrue(deletedTopicDTO.getId() == topicDTO.getId());
+        });
   }
 }

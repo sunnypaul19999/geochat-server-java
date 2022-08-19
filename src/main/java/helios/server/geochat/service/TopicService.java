@@ -17,7 +17,7 @@ public interface TopicService {
 
   List<TopicDTO> getAllTopics(String geoPointPLusCode) throws TopicException;
 
-  void updateTopic(TopicDTO topicDTO) throws TopicException;
+  TopicDTO updateTopic(TopicDTO topicDTO) throws TopicException;
 
   TopicDTO deleteTopic(int topicId) throws TopicException;
 
