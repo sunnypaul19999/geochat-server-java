@@ -1,12 +1,10 @@
 package helios.server.geochat.controller;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import helios.server.geochat.dto.response.globalresponse.InvalidRequestFormatGlobalResponse;
-import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
-import org.hibernate.Session;
+import helios.server.geochat.exceptions.dtoexception.InvalidRequestFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,17 +15,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 
 import helios.server.geochat.dto.request.UserLocationDTO;
-import helios.server.geochat.dto.response.geoPointResponse.GeoPointDTOOnRegisterFailureResponse;
-import helios.server.geochat.dto.response.geoPointResponse.GeoPointDTOOnRegisterSuccessResponse;
-import helios.server.geochat.dto.response.geoPointResponse.GeoPointDTOResponse;
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
+import helios.server.geochat.dto.response.geopointresponse.GeoPointDTOOnRegisterFailureResponse;
+import helios.server.geochat.dto.response.geopointresponse.GeoPointDTOOnRegisterSuccessResponse;
+import helios.server.geochat.dto.response.geopointresponse.GeoPointDTOResponse;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointException;
 import helios.server.geochat.service.GeoPointService;
-
-import java.util.*;
 
 @RestController
 @RequestMapping(value = "/geopoint")

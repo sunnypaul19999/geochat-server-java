@@ -1,7 +1,7 @@
 package helios.server.geochat.controller;
 
 import helios.server.geochat.dto.response.globalresponse.InvalidRequestFormatGlobalResponse;
-import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
+import helios.server.geochat.exceptions.dtoexception.InvalidRequestFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

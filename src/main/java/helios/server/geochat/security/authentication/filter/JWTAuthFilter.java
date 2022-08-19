@@ -1,7 +1,7 @@
 package helios.server.geochat.security.authentication.filter;
 
 import helios.server.geochat.dto.request.GeoUserDTO;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
+import helios.server.geochat.exceptions.serviceexceptions.geouserserviceexception.GeoUserNotFoundException;
 import helios.server.geochat.model.GeoUser;
 import helios.server.geochat.security.authentication.JWTAuthentication;
 import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;

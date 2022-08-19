@@ -1,10 +1,10 @@
 package helios.server.geochat.service.impl;
 
 import helios.server.geochat.dto.request.TopicDTO;
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointNotRegisteredException;
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicPageNumberNotInRangeException;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointNotRegisteredException;
+import helios.server.geochat.exceptions.serviceexceptions.topicserviceexception.TopicException;
+import helios.server.geochat.exceptions.serviceexceptions.topicserviceexception.TopicNotFoundException;
+import helios.server.geochat.exceptions.serviceexceptions.topicserviceexception.TopicPageNumberNotInRangeException;
 import helios.server.geochat.model.GeoPoint;
 import helios.server.geochat.model.Topic;
 import helios.server.geochat.repository.TopicRepository;

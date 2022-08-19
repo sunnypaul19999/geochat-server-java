@@ -1,7 +1,7 @@
 package helios.server.geochat;
 
 import helios.server.geochat.dto.request.UserLocationDTO;
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointException;
 import helios.server.geochat.service.GeoPointService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;

@@ -3,8 +3,8 @@ package helios.server.geochat.service;
 import helios.server.geochat.dto.request.GeoUserDTO;
 import helios.server.geochat.dto.request.NewGeoUserDTO;
 import helios.server.geochat.dto.request.VerifyGeoUserDTO;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserException;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
+import helios.server.geochat.exceptions.serviceexceptions.geouserserviceexception.GeoUserException;
+import helios.server.geochat.exceptions.serviceexceptions.geouserserviceexception.GeoUserNotFoundException;
 import helios.server.geochat.model.GeoUser;
 
 import java.util.Optional;

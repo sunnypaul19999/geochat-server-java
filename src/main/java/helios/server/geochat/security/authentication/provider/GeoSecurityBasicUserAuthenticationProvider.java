@@ -1,6 +1,6 @@
 package helios.server.geochat.security.authentication.provider;
 
-import helios.server.geochat.exceptions.securityException.GeoUserAuthenticationException;
+import helios.server.geochat.exceptions.securityexception.GeoUserAuthenticationException;
 import helios.server.geochat.service.impl.GeoSecurityUserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

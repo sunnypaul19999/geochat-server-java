@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointDefaultRangeNotFoundException;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointDefaultRangeNotFoundException;
 import helios.server.geochat.model.GeoPointRange;
 import helios.server.geochat.repository.GeoPointRangeRepository;
 import helios.server.geochat.service.GeoPointRangeService;

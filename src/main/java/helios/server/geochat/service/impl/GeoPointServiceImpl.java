@@ -4,15 +4,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointNotRegisteredException;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointNotRegisteredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import helios.server.geochat.dto.request.UserLocationDTO;
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointDefaultRangeNotFoundException;
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointException;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointDefaultRangeNotFoundException;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointException;
 import helios.server.geochat.model.GeoPoint;
-import helios.server.geochat.repository.GeoPointRangeRepository;
 import helios.server.geochat.repository.GeoPointRepository;
 import helios.server.geochat.service.GeoPointService;
 

@@ -3,8 +3,8 @@ package helios.server.geochat.service;
 import java.util.List;
 
 import helios.server.geochat.dto.request.TopicDTO;
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointNotRegisteredException;
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointNotRegisteredException;
+import helios.server.geochat.exceptions.serviceexceptions.topicserviceexception.TopicException;
 import helios.server.geochat.model.Topic;
 
 public interface TopicService {

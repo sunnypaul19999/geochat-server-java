@@ -1,12 +1,12 @@
 package helios.server.geochat.controller;
 
 import helios.server.geochat.dto.request.TopicDTO;
-import helios.server.geochat.exceptions.dtoException.InvalidRequestFormatException;
-import helios.server.geochat.dto.response.topicResponse.*;
-import helios.server.geochat.exceptions.serviceExceptions.geoPointServiceException.GeoPointNotRegisteredException;
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
-import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicPageNumberNotInRangeException;
+import helios.server.geochat.exceptions.dtoexception.InvalidRequestFormatException;
+import helios.server.geochat.dto.response.topicresponse.*;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointNotRegisteredException;
+import helios.server.geochat.exceptions.serviceexceptions.topicserviceexception.TopicException;
+import helios.server.geochat.exceptions.serviceexceptions.topicserviceexception.TopicNotFoundException;
+import helios.server.geochat.exceptions.serviceexceptions.topicserviceexception.TopicPageNumberNotInRangeException;
 import helios.server.geochat.service.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
