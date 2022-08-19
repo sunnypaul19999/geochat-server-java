@@ -20,6 +20,8 @@ public class TopicDTO {
   @JsonProperty(access = JsonProperty.Access.READ_WRITE)
   private String topicTitle;
 
+  public TopicDTO() {}
+
   public TopicDTO(@NotNull @Length(min = 80, max = 250) String title) {
     this.topicTitle = title;
   }

@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -24,9 +23,9 @@ public class GlobalController {
         InvalidRequestFormatException.class
       })
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-  public InvalidRequestFormatGlobalResponse invalidDataRequest(HttpMessageNotReadableException e) {
+  public InvalidRequestFormatGlobalResponse invalidDataRequest(Exception e) {
 
-    logger.error("Rejecting DTO. Has binding errors.");
+    logger.trace("Rejecting DTO. Has binding errors.", e);
 
     InvalidRequestFormatGlobalResponse invalidRequestFormatGlobalResponse =
         new InvalidRequestFormatGlobalResponse();
