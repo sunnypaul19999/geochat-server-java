@@ -42,47 +42,72 @@ public class SubTopicMetaDiscussionDTO {
     return geoPointPlusCode;
   }
 
-  public void setGeoPointPlusCode(String geoPointPlusCode) {
+  public SubTopicMetaDiscussionDTO setGeoPointPlusCode(String geoPointPlusCode) {
     this.geoPointPlusCode = geoPointPlusCode;
+    return this;
   }
 
   public int getTopicId() {
     return topicId;
   }
 
-  public void setTopicId(int topicId) {
+  public SubTopicMetaDiscussionDTO setTopicId(int topicId) {
     this.topicId = topicId;
+    return this;
   }
 
   public int getSubTopicId() {
     return subTopicId;
   }
 
-  public void setSubTopicId(int subTopicId) {
+  public SubTopicMetaDiscussionDTO setSubTopicId(int subTopicId) {
     this.subTopicId = subTopicId;
+    return this;
   }
 
   public int getMessageId() {
     return messageId;
   }
 
-  public void setMessageId(int messageId) {
+  public SubTopicMetaDiscussionDTO setMessageId(int messageId) {
     this.messageId = messageId;
+    return this;
   }
 
   public String getSenderUsername() {
     return senderUsername;
   }
 
-  public void setSenderUsername(String senderUsername) {
+  public SubTopicMetaDiscussionDTO setSenderUsername(String senderUsername) {
     this.senderUsername = senderUsername;
+    return this;
   }
 
   public String getMessage() {
     return message;
   }
 
-  public void setMessage(String message) {
+  public SubTopicMetaDiscussionDTO setMessage(String message) {
     this.message = message;
+    return this;
+  }
+
+  @Override
+  public String toString() {
+
+    return "SubTopicMetaDiscussionDTO{"
+        + "topicId="
+        + topicId
+        + ", subTopicId="
+        + subTopicId
+        + ", messageId="
+        + messageId
+        + ", senderUsername='"
+        + senderUsername
+        + '\''
+        + ", message='"
+        + message
+        + '\''
+        + '}';
   }
 }

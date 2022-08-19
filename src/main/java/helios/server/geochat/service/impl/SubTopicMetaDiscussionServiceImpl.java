@@ -1,35 +1,33 @@
 package helios.server.geochat.service.impl;
 
-import java.util.List;
-import java.util.Optional;
-
+import helios.server.geochat.dto.request.GeoUserDTO;
 import helios.server.geochat.dto.request.SubTopicDTO;
+import helios.server.geochat.dto.request.SubTopicMetaDiscussionDTO;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionException;
+import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionPageNumberNotInRangeException;
+import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicException;
 import helios.server.geochat.exceptions.serviceExceptions.topicServiceException.TopicNotFoundException;
+import helios.server.geochat.model.GeoUser;
+import helios.server.geochat.model.SubTopic;
+import helios.server.geochat.model.SubTopicMetaDiscussion;
 import helios.server.geochat.model.Topic;
+import helios.server.geochat.repository.SubTopicMetaDiscussionRepository;
+import helios.server.geochat.service.SubTopicMetaDiscussionService;
 import helios.server.geochat.service.SubTopicService;
 import helios.server.geochat.service.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import helios.server.geochat.service.SubTopicMetaDiscussionService;
-
-import helios.server.geochat.repository.SubTopicMetaDiscussionRepository;
-import helios.server.geochat.dto.request.GeoUserDTO;
-import helios.server.geochat.dto.request.SubTopicMetaDiscussionDTO;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.GeoUserNotFoundException;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionException;
-import helios.server.geochat.exceptions.serviceExceptions.geoUserServiceException.subTopicMetaDiscussionServiceException.SubTopicMetaDiscussionNotFoundException;
-import helios.server.geochat.exceptions.serviceExceptions.subTopicServiceException.SubTopicNotFoundException;
-import helios.server.geochat.model.GeoUser;
-import helios.server.geochat.model.SubTopic;
-import helios.server.geochat.model.SubTopicMetaDiscussion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubTopicMetaDiscussionServiceImpl implements SubTopicMetaDiscussionService {
