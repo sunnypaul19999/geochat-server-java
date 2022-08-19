@@ -22,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class SubTopicServiceTest {
+class SubTopicServiceTest {
 
   @Mock private TopicService topicService;
 
@@ -60,7 +60,7 @@ public class SubTopicServiceTest {
   }
 
   @Test
-  public void addSubTopicTest() {
+  void addSubTopicTest() {
 
     Assertions.assertDoesNotThrow(
         () -> {
@@ -84,7 +84,7 @@ public class SubTopicServiceTest {
   }
 
   @Test
-  public void updateSubTopicTest() {
+  void updateSubTopicTest() {
 
     Mockito.when(
             subTopicRepository.findByTopicTopicIdAndId(
@@ -123,7 +123,7 @@ public class SubTopicServiceTest {
   }
 
   @Test
-  public void deleteSubTopicTest() {
+  void deleteSubTopicTest() {
 
     Mockito.when(
             subTopicRepository.findByTopicTopicIdAndId(

@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class SubTopicMetaDiscussionServiceTest {
+class SubTopicMetaDiscussionServiceTest {
 
   @Mock private TopicServiceImpl topicService;
 
@@ -87,7 +87,7 @@ public class SubTopicMetaDiscussionServiceTest {
   }
 
   @Test
-  public void addMessage() {
+  void addMessage() {
 
     Assertions.assertDoesNotThrow(
         () -> {
@@ -110,12 +110,12 @@ public class SubTopicMetaDiscussionServiceTest {
           int addedSubTopicMetaDiscussId =
               subTopicMetaDiscussionService.addMessage(subTopicMetaDiscussionDTO);
 
-          Assertions.assertTrue(addedSubTopicMetaDiscussId == subTopicMetaDiscussionEntity.getId());
+          Assertions.assertEquals(addedSubTopicMetaDiscussId, subTopicMetaDiscussionEntity.getId());
         });
   }
 
   @Test
-  public void deleteMessage() {
+  void deleteMessage() {
 
     Assertions.assertDoesNotThrow(
         () -> {

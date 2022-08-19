@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class TopicServiceTest {
+class TopicServiceTest {
 
   @Mock GeoPointServiceImpl geoPointService;
 
@@ -48,7 +48,7 @@ public class TopicServiceTest {
   }
 
   @Test
-  public void addTopicTest() {
+  void addTopicTest() {
 
     Assertions.assertDoesNotThrow(
         () -> {
@@ -105,7 +105,7 @@ public class TopicServiceTest {
         () -> {
           TopicDTO deletedTopicDTO = topicService.deleteTopic(topicDTO.getId());
 
-          Assertions.assertTrue(deletedTopicDTO.getId() == topicDTO.getId());
+          Assertions.assertEquals(deletedTopicDTO.getId(), topicDTO.getId());
         });
   }
 }
