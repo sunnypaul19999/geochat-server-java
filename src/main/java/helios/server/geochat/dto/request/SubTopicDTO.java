@@ -1,14 +1,13 @@
 package helios.server.geochat.dto.request;
 
-import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotNull;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SubTopicDTO {
+public class SubTopicDTO implements Comparable<SubTopicDTO> {
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private String geoPointPlusCode;
@@ -30,7 +29,6 @@ public class SubTopicDTO {
   private String subTopicDescription;
 
   public SubTopicDTO() {}
-  
 
   public SubTopicDTO(int subTopicId, String subTopicTitle, String subTopicDescription) {
     this.subTopicId = subTopicId;
@@ -38,7 +36,22 @@ public class SubTopicDTO {
     this.subTopicDescription = subTopicDescription;
   }
 
-  public SubTopicDTO(int topicId, int subTopicId, String subTopicTitle, String subTopicDescription) {
+  public SubTopicDTO(
+      int topicId, int subTopicId, String subTopicTitle, String subTopicDescription) {
+    this.topicId = topicId;
+    this.subTopicId = subTopicId;
+    this.subTopicTitle = subTopicTitle;
+    this.subTopicDescription = subTopicDescription;
+  }
+
+  public SubTopicDTO(
+      String geoPointPlusCode,
+      int topicId,
+      int subTopicId,
+      String subTopicTitle,
+      String subTopicDescription) {
+
+    this.geoPointPlusCode = geoPointPlusCode;
     this.topicId = topicId;
     this.subTopicId = subTopicId;
     this.subTopicTitle = subTopicTitle;
@@ -83,6 +96,18 @@ public class SubTopicDTO {
 
   public void setSubTopicDescription(String subTopicDescription) {
     this.subTopicDescription = subTopicDescription;
+  }
+
+  @Override
+  public int compareTo(SubTopicDTO o) {
+
+    if (o.geoPointPlusCode.equals(geoPointPlusCode)
+        && o.topicId == topicId
+        && o.subTopicId == subTopicId
+        && o.subTopicTitle.equals(subTopicTitle)
+        && o.subTopicDescription.equals(subTopicDescription)) return 0;
+
+    return -1;
   }
 
   @Override

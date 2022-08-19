@@ -24,7 +24,7 @@ public interface SubTopicService {
 
   SubTopicDTO addSubTopic(SubTopicDTO topicDTO) throws SubTopicException, TopicException;
 
-  void updateSubTopic(SubTopicDTO subTopicDTO) throws SubTopicException;
+  SubTopicDTO updateSubTopic(SubTopicDTO subTopicDTO) throws SubTopicException;
 
   SubTopicDTO deleteSubTopic(int topicId, int subTopicId) throws SubTopicException;
 }

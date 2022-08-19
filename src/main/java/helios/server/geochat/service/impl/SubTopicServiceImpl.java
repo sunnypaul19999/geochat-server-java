@@ -24,10 +24,11 @@ import java.util.Optional;
 @Service
 public class SubTopicServiceImpl implements SubTopicService {
 
+  private final Logger logger = LoggerFactory.getLogger(getClass());
+
   @Autowired TopicService topicService;
+
   @Autowired SubTopicRepository subTopicRepository;
-  private Logger logger = LoggerFactory.getLogger(getClass());
-  private Exception e;
 
   @Override
   public SubTopic getSubTopicEntityById(int topicId, int subTopicId)
@@ -142,7 +143,12 @@ public class SubTopicServiceImpl implements SubTopicService {
 
       subTopic = subTopicRepository.save(subTopic);
 
-      return new SubTopicDTO(subTopic.getId(), subTopic.getTitle(), subTopic.getDescription());
+      return new SubTopicDTO(
+          topic.getGeoPoint().getPlusCode(),
+          topic.getTopicId(),
+          subTopic.getId(),
+          subTopic.getTitle(),
+          subTopic.getDescription());
 
     } catch (TopicException e) {
 
@@ -155,7 +161,7 @@ public class SubTopicServiceImpl implements SubTopicService {
   }
 
   @Override
-  public void updateSubTopic(SubTopicDTO subTopicDTO) throws SubTopicException {
+  public SubTopicDTO updateSubTopic(SubTopicDTO subTopicDTO) throws SubTopicException {
     try {
 
       SubTopic subTopic =
@@ -165,7 +171,14 @@ public class SubTopicServiceImpl implements SubTopicService {
 
       subTopic.setDescription(subTopicDTO.getSubTopicDescription());
 
-      subTopicRepository.save(subTopic);
+      SubTopic updatedSubTopic = subTopicRepository.save(subTopic);
+
+      return new SubTopicDTO(
+          updatedSubTopic.getTopic().getGeoPoint().getPlusCode(),
+          updatedSubTopic.getTopic().getTopicId(),
+          updatedSubTopic.getId(),
+          updatedSubTopic.getTitle(),
+          updatedSubTopic.getDescription());
 
     } catch (SubTopicNotFoundException e) {
 
@@ -175,8 +188,7 @@ public class SubTopicServiceImpl implements SubTopicService {
 
       logger.error(String.format("UPDATE_SUBTOPIC %s", subTopicDTO.toString()), e);
 
-      throw new SubTopicException(
-          String.format("UPDATE_SUBTOPIC %s", subTopicDTO.toString()), e.getMessage());
+      throw new SubTopicException(String.format("UPDATE_SUBTOPIC %s", subTopicDTO), e.getMessage());
     }
   }
 
@@ -187,10 +199,17 @@ public class SubTopicServiceImpl implements SubTopicService {
 
       SubTopic subTopic = getSubTopicEntityById(topicId, subTopicId);
 
+      Topic topic = subTopic.getTopic();
+
       subTopicRepository.delete(subTopic);
 
       // returns the topic entity object after persisting the deleted entity
-      return new SubTopicDTO(subTopic.getId(), subTopic.getTitle(), subTopic.getDescription());
+      return new SubTopicDTO(
+          topic.getGeoPoint().getPlusCode(),
+          topic.getTopicId(),
+          subTopic.getId(),
+          subTopic.getTitle(),
+          subTopic.getDescription());
 
     } catch (SubTopicNotFoundException e) {
 
