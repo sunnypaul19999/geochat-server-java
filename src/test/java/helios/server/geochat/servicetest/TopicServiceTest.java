@@ -28,13 +28,13 @@ class TopicServiceTest {
 
   @InjectMocks TopicServiceImpl topicService;
 
-  TopicDTO topicDTO;
+  private TopicDTO topicDTO;
 
-  Topic topicEntity;
+  private Topic topicEntity;
 
-  UserLocationDTO userLocationDTO;
+  private UserLocationDTO userLocationDTO;
 
-  GeoPoint geoPointEntity;
+  private GeoPoint geoPointEntity;
 
   @BeforeEach
   void init() {

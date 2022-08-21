@@ -1,19 +1,18 @@
 package helios.server.geochat.service.impl;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
-
-import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointNotRegisteredException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import helios.server.geochat.dto.request.UserLocationDTO;
 import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointDefaultRangeNotFoundException;
 import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointException;
+import helios.server.geochat.exceptions.serviceexceptions.geopointserviceexception.GeoPointNotRegisteredException;
 import helios.server.geochat.model.GeoPoint;
 import helios.server.geochat.repository.GeoPointRepository;
 import helios.server.geochat.service.GeoPointService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class GeoPointServiceImpl implements GeoPointService {
@@ -38,7 +37,8 @@ public class GeoPointServiceImpl implements GeoPointService {
   public String isGeoPointRegistered(UserLocationDTO userLocationDTO) {
     String plusCode = "";
 
-    Optional<GeoPoint> geoPoint = geoPointRepository.findById(GeoPointService.calcPlusCode(userLocationDTO));
+    Optional<GeoPoint> geoPoint =
+        geoPointRepository.findById(GeoPointService.calcPlusCode(userLocationDTO));
 
     if (geoPoint.isPresent()) {
       plusCode = geoPoint.get().getPlusCode();
@@ -62,7 +62,8 @@ public class GeoPointServiceImpl implements GeoPointService {
 
         // if no geopoint in range exits creates one for the location
         if (plusCode.isEmpty()) {
-          GeoPoint geoPoint = new GeoPoint(GeoPointService.calcPlusCode(userLocationDTO), userLocationDTO);
+          GeoPoint geoPoint =
+              new GeoPoint(GeoPointService.calcPlusCode(userLocationDTO), userLocationDTO);
 
           geoPoint = geoPointRepository.save(geoPoint);
 
@@ -105,15 +106,15 @@ public class GeoPointServiceImpl implements GeoPointService {
                   geoPoint.getLat(),
                   geoPoint.getLon()));
       if (!(dis > defRange)) {
-        Logger.getLogger(getClass().getName())
-            .info(
-                String.format(
-                    "distance btw (%f,%f) <--> (%f,%f) = %f",
-                    userLocationDTO.getLat(),
-                    userLocationDTO.getLon(),
-                    geoPoint.getLat(),
-                    geoPoint.getLon(),
-                    dis));
+        //        Logger.getLogger(getClass().getName())
+        //            .info(
+        //                String.format(
+        //                    "distance btw (%f,%f) <--> (%f,%f) = %f",
+        //                    userLocationDTO.getLat(),
+        //                    userLocationDTO.getLon(),
+        //                    geoPoint.getLat(),
+        //                    geoPoint.getLon(),
+        //                    dis));
         nearestInRangeGeoPointPlusCode = geoPoint.getPlusCode();
         break;
       }
