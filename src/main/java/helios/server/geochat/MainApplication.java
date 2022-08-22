@@ -95,7 +95,7 @@ public class MainApplication {
     http.authorizeRequests()
         .antMatchers("/geopoint/**/delete/{id}")
         .hasAuthority("USER")
-        .antMatchers("/user/login")
+        .antMatchers("/user/login","/user/logout")
         .authenticated()
         .mvcMatchers("/user/register")
         .permitAll()

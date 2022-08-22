@@ -3,7 +3,6 @@ package helios.server.geochat.service.impl;
 import helios.server.geochat.dto.request.GeoUserDTO;
 import helios.server.geochat.dto.request.NewGeoUserDTO;
 import helios.server.geochat.dto.request.VerifyGeoUserDTO;
-import helios.server.geochat.exceptions.serviceexceptions.geouserserviceexception.GeoUserConfirmPasswordMismatchException;
 import helios.server.geochat.exceptions.serviceexceptions.geouserserviceexception.GeoUserException;
 import helios.server.geochat.exceptions.serviceexceptions.geouserserviceexception.GeoUserExistsException;
 import helios.server.geochat.exceptions.serviceexceptions.geouserserviceexception.GeoUserNotFoundException;
@@ -147,15 +146,17 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
     final String operation = "ADD_USER";
 
     try {
-      if (!(newGeoUserDTO.getPassword().equals(newGeoUserDTO.getConfirmPassword()))) {
-        throw new GeoUserConfirmPasswordMismatchException(operation);
-      }
+      //      if (!(newGeoUserDTO.getPassword().equals(newGeoUserDTO.getConfirmPassword()))) {
+      //        throw new GeoUserConfirmPasswordMismatchException(operation);
+      //      }
 
       getUser(newGeoUserDTO);
 
       throw new GeoUserExistsException(newGeoUserDTO.getUsername(), operation);
 
     } catch (GeoUserNotFoundException e) {
+      // newGeoUserDTO.setPassword(passwordEncoder.encode(newGeoUserDTO.getPassword()));
+
       GeoUser geoUser = new GeoUser(newGeoUserDTO);
 
       // do later, check null
@@ -165,7 +166,7 @@ public class GeoSecurityUserServiceImpl implements GeoUserService, UserDetailsSe
 
       geoUserRepository.save(geoUser);
 
-    } catch (GeoUserConfirmPasswordMismatchException | GeoUserExistsException e) {
+    } catch (GeoUserExistsException e) {
       throw e;
     } catch (Exception e) {
       throw new GeoUserException(operation, e.getMessage());

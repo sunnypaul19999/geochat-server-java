@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,8 @@ public class GeoUserController {
 
   @Autowired GeoSecurityUserServiceImpl geoUserServiceImpl;
 
+  @Autowired PasswordEncoder passwordEncoder;
+
   private Logger logger = LoggerFactory.getLogger(getClass());
 
   @PostMapping(value = "/register")
@@ -46,18 +49,17 @@ public class GeoUserController {
         throw new InvalidRequestFormatException();
       }
 
+      newGeoUserDTO.setPassword(passwordEncoder.encode(newGeoUserDTO.getPassword()));
       geoUserServiceImpl.addUser(newGeoUserDTO);
 
       resp.setStatus(200);
-      GeoUserDTOOnRegiseterSuccessResponse geoUserDTOOnRegiseterSuccessResponse =
-          new GeoUserDTOOnRegiseterSuccessResponse();
 
-      return geoUserDTOOnRegiseterSuccessResponse;
+      return new GeoUserDTOOnRegiseterSuccessResponse();
 
     } catch (GeoUserConfirmPasswordMismatchException e) {
-      logger.info(
-          "Password and Confirm Password mismatch occurred while registering",
-          newGeoUserDTO.toString());
+      //      logger.info(
+      //          "Password and Confirm Password mismatch occurred while registering",
+      //          newGeoUserDTO.toString());
 
       GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse =
           new GeoUserDTOOnRegiseterFailureResponse();
@@ -67,7 +69,7 @@ public class GeoUserController {
 
       return geoUserDTOOnRegiseterFailureResponse;
     } catch (GeoUserExistsException e) {
-      logger.info("User already exits %s", newGeoUserDTO.toString());
+      //      logger.info("User already exits %s", newGeoUserDTO.toString());
 
       GeoUserDTOOnRegiseterFailureResponse geoUserDTOOnRegiseterFailureResponse =
           new GeoUserDTOOnRegiseterFailureResponse();
@@ -140,28 +142,29 @@ public class GeoUserController {
 
     return "logout";
   }
-  
+
   @ExceptionHandler(value = GeoUserNotFoundException.class)
-  public GeoUserDTOResponse handlerGeoUserNotFoundException(HttpServletResponse httpServletResponse,GeoUserNotFoundException e){
-    
+  public GeoUserDTOResponse handlerGeoUserNotFoundException(
+      HttpServletResponse httpServletResponse, GeoUserNotFoundException e) {
+
     httpServletResponse.setStatus(404);
 
     var dtoResponse = new GeoUserDTOResponse(false);
-    
+
     dtoResponse.setMessage("user not found");
-    
+
     return dtoResponse;
   }
-  
+
   @ExceptionHandler(value = InvalidRequestFormatException.class)
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
   public InvalidRequestFormatGlobalResponse invalidDataRequest(Exception e) {
-    
+
     logger.error("Rejecting DTO. Has binding errors.");
-    
+
     InvalidRequestFormatGlobalResponse invalidRequestFormatGlobalResponse =
-            new InvalidRequestFormatGlobalResponse();
-    
+        new InvalidRequestFormatGlobalResponse();
+
     return invalidRequestFormatGlobalResponse;
   }
 }
